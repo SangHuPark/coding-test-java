@@ -5,7 +5,7 @@ public class Solution {
         Scanner sc = new Scanner(System.in);
         String str = sc.next();
         int n = sc.nextInt();
-        
+        /*
         String total = new String();
         
         if (str.length() >= 1 && str.length() <= 10 && n >= 1 && n <= 5) {
@@ -14,6 +14,9 @@ public class Solution {
         }
         
         System.out.println(total);
+        */
+        
+        System.out.println(str.repeat(n));
         sc.close();
     }
 }
