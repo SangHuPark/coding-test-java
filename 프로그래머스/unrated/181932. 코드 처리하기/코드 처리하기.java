@@ -21,9 +21,12 @@ class Solution {
             }
         }
         
-        if(ret.equals(""))
+        /* if(ret.equals(""))
             return "EMPTY";
         else
-            return ret;
+            return ret; */
+        
+        return ret.equals("") ? "EMPTY" : ret;
+
     }
 }
