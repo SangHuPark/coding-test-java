@@ -1,6 +1,6 @@
 class Solution {
     public int solution(int n, String control) {
-        for (int i = 0; i < control.length(); i++) {
+        /* for (int i = 0; i < control.length(); i++) {
             if (control.charAt(i) == 'w')
                 n++;
             else if (control.charAt(i) == 's')
@@ -8,6 +8,17 @@ class Solution {
             else if (control.charAt(i) == 'd')
                 n += 10;
             else if (control.charAt(i) == 'a')
+                n -= 10;
+        } */
+        
+        for (char ch : control.toCharArray()) {
+            if (ch == 'w')
+                n++;
+            else if (ch == 's')
+                n--;
+            else if (ch == 'd')
+                n += 10;
+            else if (ch == 'a')
                 n -= 10;
         }
         
