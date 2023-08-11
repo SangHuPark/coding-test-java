@@ -2,8 +2,8 @@ class Solution {
     public String solution(String my_string, int[] index_list) {
         String ans = "";
         
-        for (int i = 0; i < index_list.length; i++) {
-            ans += my_string.charAt(index_list[i]);
+        for (int idx : index_list) {
+            ans += my_string.charAt(idx);
         }
         
         return ans;
