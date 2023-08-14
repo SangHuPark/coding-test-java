@@ -17,15 +17,15 @@ class Solution {
         int[] ans = list.stream().mapToInt(j->j).toArray();
         return ans; */
         
-        ArrayList<Integer> result = new ArrayList<>();
+        ArrayList<Integer> list = new ArrayList<>();
         
         for (String str : intStrs) {
             int i = Integer.parseInt(str.substring(s, s + l));
             if (i > k) {
-                result.add(i);
+                list.add(i);
             }
         }
         
-        return result.stream().mapToInt(i->i).toArray();
+        return list.stream().mapToInt(i->i).toArray();
     }
 }
