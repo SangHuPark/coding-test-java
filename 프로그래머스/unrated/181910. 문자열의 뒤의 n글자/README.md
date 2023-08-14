@@ -1,10 +1,10 @@
 # [unrated] 문자열의 뒤의 n글자 - 181910 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181910) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181910?language=java) 
 
 ### 성능 요약
 
-메모리: 77.4 MB, 시간: 10.29 ms
+메모리: 84.2 MB, 시간: 1.27 ms
 
 ### 구분
 
