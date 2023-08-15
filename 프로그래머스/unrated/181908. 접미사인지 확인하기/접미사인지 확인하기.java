@@ -21,5 +21,7 @@ class Solution {
         }
         
         return result;
+        
+        // return myString.endsWith(isSuffix) ? 1 : 0;
     }
 }
