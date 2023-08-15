@@ -10,7 +10,8 @@ class Solution {
             list.add(str);
         }
 
-        Collections.sort(list);
+        // Collections.sort(list);
+        list.sort(null);
         
         String[] strArr = new String[list.size()];
         strArr = list.toArray(strArr);
