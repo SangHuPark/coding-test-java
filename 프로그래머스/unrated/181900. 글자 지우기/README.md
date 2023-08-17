@@ -1,10 +1,10 @@
 # [unrated] 글자 지우기 - 181900 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181900) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181900?language=java) 
 
 ### 성능 요약
 
-메모리: 74.9 MB, 시간: 0.04 ms
+메모리: 75.8 MB, 시간: 1.48 ms
 
 ### 구분
 
