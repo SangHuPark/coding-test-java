@@ -1,10 +1,10 @@
 # [unrated] 2의 영역 - 181894 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181894) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181894?language=java) 
 
 ### 성능 요약
 
-메모리: 103 MB, 시간: 9.91 ms
+메모리: 104 MB, 시간: 4.59 ms
 
 ### 구분
 

@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Solution {
-    public int[] solution(int[] arr) {
+    public ArrayList<Integer> solution(int[] arr) {
         ArrayList<Integer> list = new ArrayList<>();
         int start = -1;
         int end = -1;
@@ -13,24 +13,20 @@ class Solution {
             }
         }
         
-        if (start == -1) {
-            int[] ans = {start};
-            return ans;
-        }
-        
-        for (int j = arr.length-1; j >= 0; j--) {
-            if (arr[j] == 2) {
-                end = j;
+        for (int i = arr.length-1; i >= 0; i--) {
+            if (arr[i] == 2) {
+                end = i;
                 break;
             }
         }
         
+        if (start == -1) {
+            list.add(-1);
+        } else {
+            for (int i = start; i <= end; i++)
+                list.add(arr[i]);
+        }
         
-        for (int t = start; t <= end; t++)
-            list.add(arr[t]);
-        
-        int[] ans = list.stream().mapToInt(n->n).toArray();
-        
-        return ans;
+        return list;
     }
 }
