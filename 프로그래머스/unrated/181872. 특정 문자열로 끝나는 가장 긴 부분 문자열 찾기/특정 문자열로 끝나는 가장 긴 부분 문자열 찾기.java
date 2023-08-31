@@ -17,12 +17,16 @@ class Solution {
 //             strArr[i] = "";
 //         }
         
-        for (int i = myString.length(); i >= 0; i--) {
-            myString = myString.substring(0, i);
-            if(myString.endsWith(pat)) {
-                return myString;
-            } 
-        }
+        // for (int i = myString.length(); i >= 0; i--) {
+        //     myString = myString.substring(0, i);
+        //     if(myString.endsWith(pat)) {
+        //         return myString;
+        //     } 
+        // }
+        
+        int idx = myString.lastIndexOf(pat);
+        // System.out.println(idx + " " + myString.substring(0, idx));
+        ans = myString.substring(0, idx) + pat;
         
         return ans;
     }
