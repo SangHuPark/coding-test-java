@@ -1,9 +1,9 @@
 import java.util.*;
 
 class Solution {
-    public ArrayList<String> solution(String myStr) {
-        myStr = myStr.replaceAll("b", "a").replaceAll("c", "a");
-        String[] arr = myStr.split("a");
+    public String[] solution(String myStr) {
+        myStr = myStr.replaceAll("a|b|c", " ");
+        String[] arr = myStr.split(" ");
         ArrayList<String> list = new ArrayList<>();
         
         for (int i = 0; i < arr.length; i++) {
@@ -11,15 +11,13 @@ class Solution {
                 list.add(arr[i]);
         }
         
-        // String[] ans = new String[list.size()];
+        String[] ans = new String[list.size()];
         if (list.size() == 0) {
             list.add("EMPTY");
         }
         
-//         list.toArray(ans);
+        list.toArray(ans);
         
-//         System.out.println(list + ", " + ans);
-        
-        return list;
+        return ans.length == 0 ? new String[] { "EMPTY" } : ans;
     }
 }
