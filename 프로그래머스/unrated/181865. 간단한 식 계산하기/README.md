@@ -1,10 +1,10 @@
 # [unrated] 간단한 식 계산하기 - 181865 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181865) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181865?language=java) 
 
 ### 성능 요약
 
-메모리: 74.2 MB, 시간: 0.14 ms
+메모리: 73.7 MB, 시간: 0.09 ms
 
 ### 구분
 
