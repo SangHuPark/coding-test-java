@@ -13,8 +13,7 @@ class Solution {
             
             ans[count++] = num;
         }
-            
-        
+    
         return ans;
     }
 }
