@@ -16,12 +16,18 @@ class Solution {
 //         }
         
         int[] countArr = new int[31];
+        
+        int answer = 0;
 
         for(int i=0; i < strArr.length; i++) {
             countArr[strArr[i].length()]++;
         }
 
-        int answer = Arrays.stream(countArr).max().getAsInt();
+        for(int i=0; i<=30; i++) {
+            answer = Math.max(answer, countArr[i]);
+        }
+        
+        // int answer = Arrays.stream(countArr).max().getAsInt();
         
         return answer;
     }
