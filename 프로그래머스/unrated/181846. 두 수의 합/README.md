@@ -1,10 +1,10 @@
 # [unrated] 두 수의 합 - 181846 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181846) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181846?language=java) 
 
 ### 성능 요약
 
-메모리: 104 MB, 시간: 228.13 ms
+메모리: 79.2 MB, 시간: 9.14 ms
 
 ### 구분
 
