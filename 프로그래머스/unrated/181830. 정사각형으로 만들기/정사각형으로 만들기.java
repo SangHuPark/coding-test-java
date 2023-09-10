@@ -1,9 +1,6 @@
 class Solution {
     public int[][] solution(int[][] arr) {
         int num = arr.length >= arr[0].length ? arr.length : arr[0].length;
-        // while (num % 2 != 0) {
-        //     num++;
-        // }
         
         int[][] answer = new int[num][num];
         
