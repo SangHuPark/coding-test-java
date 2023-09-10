@@ -1,10 +1,10 @@
 # [unrated] 정수를 나선형으로 배치하기 - 181832 
 
-[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181832) 
+[문제 링크](https://school.programmers.co.kr/learn/courses/30/lessons/181832?language=java) 
 
 ### 성능 요약
 
-메모리: 73.2 MB, 시간: 0.05 ms
+메모리: 76.4 MB, 시간: 0.03 ms
 
 ### 구분
 
