@@ -9,12 +9,7 @@ class Solution {
         for (int i = balls; i > share; i--) {
             answer *= i;
             answer /= balls-i+1;
-            // System.out.println(i);
         }
-//         long n = Factorial(share, balls);
-//         long m = Factorial(0, balls - share);
-        
-//         answer = n / m;
         
         return answer;
     }
