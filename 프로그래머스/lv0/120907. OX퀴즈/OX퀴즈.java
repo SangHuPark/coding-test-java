@@ -1,7 +1,7 @@
 import java.util.*;
 
 class Solution {
-    public ArrayList<String> solution(String[] quiz) {
+    public String[] solution(String[] quiz) {
         ArrayList<String> list = new ArrayList<>();
         
         for (String str : quiz) {
@@ -10,22 +10,18 @@ class Solution {
             int num2 = Integer.parseInt(strArr[2]);
             String oper = strArr[1];
             int result = Integer.parseInt(strArr[4]);
+            String ans = new String();
             
             if (oper.equals("+")) {
-                if (num1 + num2 == result) {
-                    list.add("O");
-                } else {
-                    list.add("X");
-                }
+                ans = num1 + num2 == result ? "O" : "X";
             } else {
-                if (num1 - num2 == result) {
-                    list.add("O");
-                } else {
-                    list.add("X");
-                }
+                ans = num1 - num2 == result ? "O" : "X";
             }
+            
+            list.add(ans);
         }
         
-        return list;
+        String[] answer = list.toArray(new String[list.size()]);
+        return answer;
     }
 }
