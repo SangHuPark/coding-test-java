@@ -7,10 +7,12 @@ class Solution {
         
         for (int i = 1; i < dots.length; i++) {
             if (dots[i][0] == x) {
-                height = dots[i][1] > y ? dots[i][1] - y : y - dots[i][1];
+                // height = dots[i][1] > y ? dots[i][1] - y : y - dots[i][1];
+                height = Math.abs(dots[i][1] - y);
             }
             if (dots[i][1] == y) {
-                leng = dots[i][0] > x ? dots[i][0] - x : x - dots[i][0];
+                // leng = dots[i][0] > x ? dots[i][0] - x : x - dots[i][0];
+                leng = Math.abs(dots[i][0] - x);
             }
         }
         
