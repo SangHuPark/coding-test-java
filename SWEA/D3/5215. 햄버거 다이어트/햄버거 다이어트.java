@@ -37,38 +37,26 @@ public class Solution {
 
     public static int bestScore;
 
-    public static void hamburgerCombination(int selectIdx, int caloriesIdx) {
+    public static void hamburgerCombination(int selectIdx, int elementIdx, int sumScore, int sumCalorie) {
+        if(sumCalorie > limitCalories) {
+            return;
+        }
+        
         if(selectIdx == selectElementCount) {
-            int sumCalorie = 0;
-            for(int calorie : selectCaloriesList) {
-                sumCalorie += calorie;
-            }
-
-            if(sumCalorie <= limitCalories) {
-                int sumScore = 0;
-                for(int idx = 0; idx < elementCount; idx++) {
-                    if(selectIndexList[idx]) {
-                        sumScore += scoreList[idx];
-                    }
-                }
-
-                bestScore = Math.max(bestScore, sumScore);
-            }
-
+            bestScore = Math.max(bestScore, sumScore);
             return;
         }
 
-        if(caloriesIdx == elementCount) {
+        if(elementIdx == elementCount) {
             return;
         }
 
-        selectCaloriesList[selectIdx] = caloriesList[caloriesIdx];
-        selectIndexList[caloriesIdx] = true;
-        hamburgerCombination(selectIdx + 1, caloriesIdx + 1);
-        selectIndexList[caloriesIdx] = false;
+
+        selectCaloriesList[selectIdx] = caloriesList[elementIdx];
+        hamburgerCombination(selectIdx + 1, elementIdx + 1, sumScore + scoreList[elementIdx], sumCalorie + caloriesList[elementIdx]);
 
         selectCaloriesList[selectIdx] = 0;
-        hamburgerCombination(selectIdx, caloriesIdx + 1);
+        hamburgerCombination(selectIdx, elementIdx + 1, sumScore, sumCalorie);
     }
 
     public static void main(String[] args) throws IOException {
@@ -95,8 +83,7 @@ public class Solution {
             for(int select = 1; select <= elementCount; select++) {
                 selectElementCount = select;
                 selectCaloriesList = new int[selectElementCount];
-                selectIndexList = new boolean[elementCount];
-                hamburgerCombination(0, 0);
+                hamburgerCombination(0, 0, 0, 0);
             }
 
             sb.append("#").append(tc).append(" ").append(bestScore).append("\n");
