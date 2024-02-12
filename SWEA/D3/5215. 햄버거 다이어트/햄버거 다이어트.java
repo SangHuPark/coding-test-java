@@ -30,10 +30,8 @@ public class Solution {
 
     public static int[] scoreList;
     public static int[] caloriesList;
-    public static boolean[] selectIndexList;
 
     public static int selectElementCount;
-    public static int[] selectCaloriesList;
 
     public static int bestScore;
 
@@ -51,11 +49,8 @@ public class Solution {
             return;
         }
 
-
-        selectCaloriesList[selectIdx] = caloriesList[elementIdx];
         hamburgerCombination(selectIdx + 1, elementIdx + 1, sumScore + scoreList[elementIdx], sumCalorie + caloriesList[elementIdx]);
 
-        selectCaloriesList[selectIdx] = 0;
         hamburgerCombination(selectIdx, elementIdx + 1, sumScore, sumCalorie);
     }
 
@@ -82,7 +77,6 @@ public class Solution {
 
             for(int select = 1; select <= elementCount; select++) {
                 selectElementCount = select;
-                selectCaloriesList = new int[selectElementCount];
                 hamburgerCombination(0, 0, 0, 0);
             }
 
