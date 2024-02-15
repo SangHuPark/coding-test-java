@@ -7,8 +7,8 @@ import java.util.StringTokenizer;
  * 1. 고객의 수를 저장하는 clientCount
  * 2. 회사, 집, N명의 고객 좌표를 저장하는 company, home, 1차원 배열 client
  * 3. 최소 거리를 저장하는 minDistance
- * 4. 방문할 고객 순으로 순열을 저장하는 selectClientList
- * 	4-1. 순열을 생성하며 현재 거리에 누적을 파라미터로 넘겨준다.
+ * 4. 방문할 고객의 순서를 저장하는
+ * 	4-1. 순열을 생성하며 이동한 거리에 누적을 파라미터로 넘겨준다.
  * 	4-2. 순열 생성이 완성되면 최소 거리 저장
  * 	4-3. 중간에 생성된 순열에서 현재 최소 거리를 넘으면 백트래킹
  */
@@ -27,15 +27,13 @@ public class Solution {
     public static int[] clientCol;
 
     public static int minDistance;
-    public static int totalDistance;
 
-    public static int[] selectClientList;
-    public static boolean[] usedCheckList;
+    public static boolean[] visitedCheckList;
 
-    public static void clientPermu(int selectIdx, int beforeRow, int beforeCol, int curDistance) {
+    public static void visitPermutation(int selectIdx, int beforeRow, int beforeCol, int curDistance) {
         if(selectIdx == clientCount) {
-            curDistance += Math.abs(clientRow[selectClientList[selectIdx-1]] - homeRow)
-                    + Math.abs(clientCol[selectClientList[selectIdx-1]] - homeCol);
+            curDistance += Math.abs(beforeRow - homeRow)
+                    + Math.abs(beforeCol - homeCol);
 
             if(curDistance < minDistance) {
                 minDistance = curDistance;
@@ -48,18 +46,17 @@ public class Solution {
             return;
         }
 
-        for(int elementIdx = 0; elementIdx < clientCount; elementIdx++) {
-            if(usedCheckList[elementIdx]) {
+        for(int clientIdx = 0; clientIdx < clientCount; clientIdx++) {
+            if(visitedCheckList[clientIdx]) {
                 continue;
             }
 
-            selectClientList[selectIdx] = elementIdx;
-            usedCheckList[elementIdx] = true;
-            clientPermu(selectIdx + 1,
-                    clientRow[selectClientList[selectIdx]], clientCol[selectClientList[selectIdx]],
-                    curDistance + DISTANCE(beforeRow, beforeCol, clientRow[selectClientList[selectIdx]], clientCol[selectClientList[selectIdx]]));
+            visitedCheckList[clientIdx] = true;
+            visitPermutation(selectIdx + 1,
+                    clientRow[clientIdx], clientCol[clientIdx],
+                    curDistance + DISTANCE(beforeRow, beforeCol, clientRow[clientIdx], clientCol[clientIdx]));
 
-            usedCheckList[elementIdx] = false;
+            visitedCheckList[clientIdx] = false;
         }
     }
 
@@ -95,10 +92,9 @@ public class Solution {
             minDistance = Integer.MAX_VALUE;
 
             // 4. 방문할 고객 순으로 순열을 저장하는 selectClientList
-            selectClientList = new int[clientCount];
-            usedCheckList = new boolean[clientCount];
+            visitedCheckList = new boolean[clientCount];
 
-            clientPermu(0, companyRow, companyCol, 0);
+            visitPermutation(0, companyRow, companyCol, 0);
 
             sb.append("#").append(tc).append(" ").append(minDistance).append("\n");
         }
