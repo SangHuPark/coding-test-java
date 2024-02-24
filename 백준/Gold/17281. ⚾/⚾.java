@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
  * 2. 각 선수의 이닝 결과를 저장하는 hitterList
  * 3. 1번 선수를 4번 타자로 고정
  * 4. 나머지 8명 선수로 타순 순열을 만들어 득점 최대값 찾기
- * 	4-1. 이미 0의 개수가 3의 배수로 inningCount 만큼 나오면 더 만들 필요 없음
+ * 	4-1. 8명의 선수에 1번 타자를 4번 순서로 지정하여 저장하는 resultHitterList
  * 	4-2. 만들어진 순열로 야구를 진행하는 play 메서드
  */
 public class Main {
@@ -29,7 +29,7 @@ public class Main {
     public static int[][] hitterList;
 
     public static final int PLAYER_COUNT = 9;
-    public static final int BASE_COUNT = 4;
+    public static final int BASE_COUNT = 3;
 
     public static final int ELEMENT_COUNT = 8;
     public static final int SELECT_COUNT = 8;
@@ -48,6 +48,7 @@ public class Main {
 
     public static void hitterPermu(int selectIdx) {
         if(selectIdx == SELECT_COUNT) {
+            // 4-1. 8명의 선수에 1번 타자를 4번 순서로 지정하여 저장하는 resultHitterList
             resultHitterList = new ArrayList<>();
 			for(int idx = 0; idx < SELECT_COUNT; idx++) {
                 resultHitterList.add(selectList[idx]);
@@ -56,8 +57,8 @@ public class Main {
             resultHitterList.add(3, 3);
 
             // 현재 출루 정보를 저장.
-            baseInfoList = new boolean[BASE_COUNT-1];
-            // 해당 타순 득점
+            baseInfoList = new boolean[BASE_COUNT];
+            // 현재 타순 득점
             curScore = 0;
 
             // 경기 진행
@@ -84,21 +85,23 @@ public class Main {
     }
 
     public static void play() {
-        int outCount = 0;
+        int outCount;
         int hitterIdx = 0;
-        int batIdx = 0;
 
         for(int inning = 0; inning < inningCount; inning++) {
             // base 정보 초기화
-            for(int idx = 0; idx < BASE_COUNT-1; idx++) {
+            for(int idx = 0; idx < BASE_COUNT; idx++) {
                 baseInfoList[idx] = false;
             }
             // outCount 초기화
             outCount = 0;
 
+            // 3아웃이 나올때까지 진행
             while(outCount < 3) {
+                // 현재 타석
                 int nowHitter = hitterList[resultHitterList.get(hitterIdx)][inning];
 
+                // 검사
                 switch(nowHitter) {
                     case 0: outCount++; break;
                     case 1: oneHit(); break;
@@ -107,17 +110,16 @@ public class Main {
                     case 4: homeRun(); break;
                 }
 
+                // 0~8 반복
                 hitterIdx = (hitterIdx+1) % 9;
-
-                if(hitterIdx == 0) {
-                    batIdx = (batIdx + 1) % inningCount;
-                }
             }
         }
 
     }
 
+    // 1루타
     public static void oneHit() {
+        // 3루에 주자가 있는 경우만 득점
         if(baseInfoList[2]) {
             curScore++;
             baseInfoList[2] = false;
@@ -133,10 +135,13 @@ public class Main {
             baseInfoList[1] = true;
         }
 
+        // 타자 이동
         baseInfoList[0] = true;
     }
 
+    // 2루타
     public static void twoHit() {
+        // 2, 3루 주자 득점
         if(baseInfoList[2]) {
             curScore++;
             baseInfoList[2] = false;
@@ -152,10 +157,13 @@ public class Main {
             baseInfoList[2] = true;
         }
 
+        // 타자 이동
         baseInfoList[1] = true;
     }
 
+    // 3루타
     public static void threeHit() {
+        // 1, 2, 3루 주자 득점
         if(baseInfoList[2]) {
             curScore++;
             baseInfoList[2] = false;
@@ -171,12 +179,13 @@ public class Main {
             baseInfoList[0] = false;
         }
 
+        // 타자 이동
         baseInfoList[2] = true;
     }
 
     public static void homeRun() {
         // 주자 득점
-        for(int idx = 0; idx < BASE_COUNT - 1; idx++) {
+        for(int idx = 0; idx < BASE_COUNT; idx++) {
             if(baseInfoList[idx]) {
                 curScore++;
                 baseInfoList[idx] = false;
