@@ -7,30 +7,31 @@ import java.util.StringTokenizer;
 
 /**
  * 1. 숲의 크기 rowSize, colSize (R, C <= 50)
- * 2. 숲에 정보를 저장하는 forest
- *  2-1. 물(*) 의 위치에 waterNum(-1) 저장
+ * 2. 숲의 정보를 저장하는 forest
+ *  2-1. 물(*) 의 위치에 edgeWater(-1) 저장
  *  2-2. 고슴도치(S) 의 위치를 저장하는 startRow, startCol (forest 에 0 저장)
- *  2-3. 비버의 굴(D) 는 51 로 저장
- *  2-4. 이동 가능하다면 0 으로 저장, 돌(X)은 -51 로 저장
- * 3. 고슴도치의 위치에서 부터 BFS 시작
- *  3-1. BFS 의 파라미터로 고슴도치의 위치와 이동횟수를 가진 클래스 Sinfo 전달
- *  3-2. 물(waterNum)이 차는 지점에 waterNum - 1 값 저장
- *  3-3. 고슴도치는 4방 으로 0 이거나 방문하지 않은 곳만 이동 가능
+ *  2-3. 비버의 굴(D) 은 251 로 저장
+ *  2-4. 이동 가능하다면 0 으로 저장, 돌(X)은 -251 로 저장
+ * 3. 시작 위치에서 BFS 시작
+ *  3-1. 고슴도치의 위치와 이동횟수, 그때 퍼진 물(edgeWater)을 가진 클래스 Sinfo
+ *  3-2. poll 한 뒤 현재 퍼진 물이 현재 가장자리 물과 같다면 물 확장
+ *  3-3. 물(edgeWater)이 새롭게 차는 지점에 edgeWater - 1 값 저장
+ *  3-4. 고슴도치는 4방 으로 0 이거나 도착지면서 방문하지 않은 곳만 이동 가능
  * 4. 도착지까지 온 횟수를 저장하는 resultMoveCnt
- *  4-1. 초기값 -1, 출력 시 -1 이면 "KAKTUS" 출력
+ *  4-1. 초기값 -1, BFS 후 -1 이면 "KAKTUS" 출력
  */
 public class Main {
     static class Sinfo {
         int row;
         int col;
         int moveCnt;
-        int curWater = waterNum;
+        int water;
 
-        public Sinfo(int row, int col, int moveCnt, int curWater) {
+        public Sinfo(int row, int col, int moveCnt, int water) {
             this.row = row;
             this.col = col;
             this.moveCnt = moveCnt;
-            curWater = waterNum;
+            this.water = water;
         }
     }
 
@@ -44,7 +45,7 @@ public class Main {
 
     public static int rowSize, colSize;
     public static int[][] forest;
-    public static int waterNum = -1;
+    public static int edgeWater = -1;
 
     public static int resultMoveCnt = -1;
 
@@ -59,20 +60,23 @@ public class Main {
         visited[start.row][start.col] = true;
 
         while(!queueS.isEmpty()) {
+            // 3-1. 고슴도치의 위치와 이동횟수, 그때 퍼진 물(edgeWater)을 가진 클래스 Sinfo
             Sinfo curS = queueS.poll();
 
-            // D(51) 이면 도착
+            // D(251) 이면 도착
             if (forest[curS.row][curS.col] == DESTINATION) {
+                // 4. 도착지까지 온 횟수를 저장하는 resultMoveCnt
                 resultMoveCnt = curS.moveCnt;
                 return;
             }
 
-            if (curS.curWater == waterNum) {
+            // 3-2. poll 한 뒤 현재 퍼진 물이 현재 가장자리 물과 같다면 물 확장
+            if (curS.water == edgeWater) {
                 // 물
                 spreadWater();
             }
 
-            // 고슴도치 이동
+            // 고슴도치 이동 가능한 위치 찾기
             for (int deltaIdx = 0; deltaIdx < 4; deltaIdx++) {
                 int nextRow = curS.row + deltaRow[deltaIdx];
                 int nextCol = curS.col + deltaCol[deltaIdx];
@@ -82,25 +86,12 @@ public class Main {
                     continue;
                 }
 
-                // 0 이거나 도착지면서 방문하지 않은 지점만 가능
+                // 3-4. 고슴도치는 4방 으로 0 이거나 도착지면서 방문하지 않은 곳만 이동 가능
                 if ((forest[nextRow][nextCol] == CAN_MOVE || forest[nextRow][nextCol] == DESTINATION) && !visited[nextRow][nextCol]) {
-                    queueS.add(new Sinfo(nextRow, nextCol, curS.moveCnt + 1, waterNum));
+                    queueS.add(new Sinfo(nextRow, nextCol, curS.moveCnt + 1, edgeWater));
                     visited[nextRow][nextCol] = true;
                 }
             }
-
-//            for (int row = 0; row < rowSize; row++) {
-//                System.out.print("행 = " + row + "          ");
-//                for (int col = 0; col < colSize; col++) {
-//                    if(row == curS.row && col == curS.col) {
-//                        System.out.print("S ");
-//                        continue;
-//                    }
-//                    System.out.print(forest[row][col] + " ");
-//                }
-//                System.out.println();
-//            }
-//            System.out.println("----------------------------");
         }
     }
 
@@ -108,7 +99,7 @@ public class Main {
         // waterNum 과 같은 지점을 4방으로 확장
         for (int row = 0; row < rowSize; row++) {
             for (int col = 0; col < colSize; col++) {
-                if(forest[row][col] == waterNum) {
+                if(forest[row][col] == edgeWater) {
                     // 4 방 확장
                     for (int deltaIdx = 0; deltaIdx < 4; deltaIdx++) {
                         int nextRow = row + deltaRow[deltaIdx];
@@ -124,15 +115,15 @@ public class Main {
                             continue;
                         }
 
-                        // 확장: waterNum-1
-                        forest[nextRow][nextCol] = waterNum - 1;
+                        // 3-3. 물(edgeWater)이 새롭게 차는 지점에 edgeWater - 1 값 저장
+                        forest[nextRow][nextCol] = edgeWater - 1;
                     }
                 }
             }
         }
 
         // 다음에 확장될 물 값 갱신
-        waterNum--;
+        edgeWater--;
     }
 
     public static boolean isArrange(int row, int col) {
@@ -144,27 +135,31 @@ public class Main {
         rowSize = Integer.parseInt(st.nextToken());
         colSize = Integer.parseInt(st.nextToken());
 
+        // 1. 숲의 크기 rowSize, colSize (R, C <= 50)
         int startRow = 0, startCol = 0;
+        // 2. 숲의 정보를 저장하는 forest
         forest = new int[rowSize][colSize];
         for (int row = 0; row < rowSize; row++) {
             String input = br.readLine().trim();
             for (int col = 0; col < colSize; col++) {
                 switch (input.charAt(col)) {
-                    case '.': forest[row][col] = CAN_MOVE; break; // 이동 가능
-                    case '*': forest[row][col] = waterNum; break; // 물
+                    case '.': forest[row][col] = CAN_MOVE; break; // 2-4. 이동 가능하다면 0 으로 저장, 돌(X)은 -251 로 저장
+                    case '*': forest[row][col] = edgeWater; break; // 2-1. 물(*) 의 위치에 edgeWater(-1) 저장
                     case 'X': forest[row][col] = ROCK; break; // 돌
-                    case 'S': // 고슴도치(시작위치)
+                    case 'S': // 2-2. 고슴도치(S) 의 위치를 저장하는 startRow, startCol (forest 에 0 저장)
                         forest[row][col] = CAN_MOVE;
                         startRow = row;
                         startCol = col;
                         break;
-                    case 'D': forest[row][col] = DESTINATION; break; // 비버(도착위치)
+                    case 'D': forest[row][col] = DESTINATION; break; // 2-3. 비버의 굴(D) 은 251 로 저장
                 }
             }
         }
 
-        move(new Sinfo(startRow, startCol, 0, waterNum));
+        // 3. 시작 위치에서 BFS 시작
+        move(new Sinfo(startRow, startCol, 0, edgeWater));
 
+        // 4-1. 초기값 -1, BFS 후 -1 이면 "KAKTUS" 출력
         if(resultMoveCnt == -1) {
             System.out.println("KAKTUS");
             return;
