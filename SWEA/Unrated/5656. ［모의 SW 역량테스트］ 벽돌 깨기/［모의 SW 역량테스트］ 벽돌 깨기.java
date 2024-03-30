@@ -89,6 +89,8 @@ public class Solution {
 
         // 순열에 들어갈 원소는 모든 열(0 ~ colSize-1)
         for(int element = 0; element < colSize; element++) {
+            if (minBrick == 0) return;
+            
             selectList[selectIdx] = element;
             ballPermu(selectIdx + 1);
         }
