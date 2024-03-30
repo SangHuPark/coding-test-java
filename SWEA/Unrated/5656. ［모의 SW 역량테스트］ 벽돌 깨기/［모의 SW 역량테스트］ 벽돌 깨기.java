@@ -125,6 +125,8 @@ public class Solution {
             int range = curBrick.range;
             curBrickMap[curRow][curCol] = 0;
 
+            if(range == 1) continue;
+            
             for(int deltaIdx = 0; deltaIdx < 4; deltaIdx++) {
                 int nextRow = curRow;
                 int nextCol = curCol;
