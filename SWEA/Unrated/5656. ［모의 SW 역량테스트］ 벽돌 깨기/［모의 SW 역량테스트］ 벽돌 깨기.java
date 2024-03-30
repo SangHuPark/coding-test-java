@@ -175,9 +175,6 @@ public class Solution {
             for(int row = rowSize-1; row >= 0; row--) {
                 // 빈 공간일 때
                 if(curBrickMap[row][col] == 0) {
-                    // 옮겨야할 현재 값
-                    int brickNum = curBrickMap[row][col];
-
                     int nextRow = row;
 
                     // 인덱스 끝까지 이동
