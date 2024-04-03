@@ -6,9 +6,10 @@ import java.util.StringTokenizer;
 /**
  * 1. 점원의 수와 선반의 높이를 입력받는다.
  * 2. 점원의 키를 입력받는다.
- * 3. 점원을 선택하는 순열을 생성한다.
+ * 3. 점원을 선택하는 순서는 의미가 없으므로 조합을 생성한다.
  *  3-1. 선택 시 키를 더해 넘겨준다.
- *  3-2. 선반의 높이를 넘었다면 최소값을 갱신 한 뒤 백트래킹한다.
+ *  3-2. 선택하지 않는다면 다음 점원의 인덱스로만 넘겨준다.
+ *  3-3. 선반의 높이를 넘었다면 최소값을 갱신 한 뒤 백트래킹한다.
  */
 public class Solution {
     public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
