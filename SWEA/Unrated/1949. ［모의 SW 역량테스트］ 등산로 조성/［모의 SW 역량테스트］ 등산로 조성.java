@@ -60,7 +60,7 @@ public class Solution {
     public static final int[] DELTA_COL = {1, 0, -1, 0};
 
     public static void makeMountainLoad(Peak peak, boolean[][] visited, boolean digFlag) {
-        
+
         visited[peak.row][peak.col] = true;
 
         for (int deltaIdx = 0; deltaIdx < DELTA_LENG; deltaIdx++) {
@@ -80,9 +80,7 @@ public class Solution {
                     for (int digDepth = 1; digDepth <= maxDigDepth; digDepth++) {
                         if(map[nextRow][nextCol] - digDepth < map[peak.row][peak.col]) {
                             map[nextRow][nextCol] -= digDepth;
-                            visited[nextRow][nextCol] = true; // 방문 처리
                             makeMountainLoad(new Peak(nextRow, nextCol, peak.loadLength+1), visited, true);
-                            visited[nextRow][nextCol] = false; // 방문 복구
                             map[nextRow][nextCol] += digDepth;
                             break;
                         }
@@ -90,9 +88,7 @@ public class Solution {
                 }
             } // 아니라면 높이가 낮을 때만 이동 가능
             else if(map[nextRow][nextCol] < map[peak.row][peak.col]) {
-                visited[nextRow][nextCol] = true; // 방문 처리
                 makeMountainLoad(new Peak(nextRow, nextCol, peak.loadLength+1), visited, digFlag);
-                visited[nextRow][nextCol] = false; // 방문 복구
             }
 
         }
