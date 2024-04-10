@@ -1,229 +1,183 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
- * [조건]
- * - 지도의 크기는 10x10 고정
- * - 총 이동 시간 M (20 <= M <= 100)
- * - BC 의 개수 A (1 <= A <= 8)
- * - BC 의 충전 범위 C (1 <= C <= 4)
- * - BC 의 성능 P (10 <= P <= 500)
+ * [ main() ]
+ * 1. 테스트 케이스 개수를 입력받는다.
  *
- * 1. 총 이동 시간 M 과 BC 의 개수 A 를 저장하는 totalMoveCount, batteryCount
- * 2. 사용자 A, B 의 이동 정보를 저장하는 userAMoveList, userBMoveList
- * 3. 각 AP 의 정보를 저장하는 Battery 형 1차원 배열 batteryList
- *  3-1. AP 의 좌표와 범위, 성능을 저장하는 Battery 클래스
- * 4. 각 배터리 별 배터리 영역을 저장하는 3차원 배열 chargeArea
- * 5. 사용자를 이동하며 배터리 충전량의 누적 합의 최대 계산
- * 6. 배터리 영역을 만들 때의 방향을 저장하는 BATTERY_DELTA_ROW, BATTERY_DELTA_COL
- * 7. 사용자 A, B 의 이동 방향을 저장하는 USER_DELTA_ROW, USER_DELTA_COL
- *  7-1. A 는 이동하지 않음, 상, 우, 하, 좌
+ * [ inputTestCase() ]
+ * 2. 총 이동 시간, BC 의 개수를 입력받는다.
+ * 3. 사용자의 이동 정보를 입력받는다.
+ *  3-1. 사용자 A, 사용자 B 배열에 각각 저장한다.
+ * 4. BC 의 정보를 저장한다.
+ *  4-1. BC 의 row, col, rangeMap, power 를 저장한다.
+ *  4-2. BC 의 범위를 각 rangeMap 에 true 로 한다.
+ *
+ * [ goCharge() ]
+ * 5. 두 사용자의 이동 정보를 따라 이동한다.
+ *  5-1. 두 사용자의 현재 위치에서 충전할 수 있는지 검사한다.
+ *      5-1-1. 모든 BC 를 반복하며 각 사용자가 충전할 BC 의 인덱스, power를 각각 저장한다.
+ *      5-1-2. 두 사용자의 위치 모두 true 일 경우
+ *          5-1-2-1. 현재 선택한 BC 가 없다면 해당 BC 의 power/2 로 갱신한다.
+ *          5-1-2-2. 현재 선택한 BC 가 있다면 해당 BC 의 power/2 의 값과 기존에 선택한 BC 의 power 값을 비교 후 큰 쪽으로 갱신한다.
+ *      5-1-3. 한 사용자의 위치만 true 일 경우
+ *          5-1-3-1. 현재 선택한 BC 가 없다면 해당 BC 로 갱신한다.
+ *          5-1-3-2. 현재 선택한 BC 가 있을 때 현재 사용자는 해당 BC 의 power 와 비교해 큰 BC 로 갱신한다.
+ *              5-1-3-2-1. 기존의 BC 가 다른 사용자가 선택한 BC 와 같다면 다른 사용자의 power/2 를 다시 power 로 바꾼다.
+ *  5-2. 각 선택한 BC 의 power 를 충전 결과 배열에 저장한다.
+ *  5-3. 이동 방향은 X-상-우-하-좌
+ *      5-3-1. 사용자 A 는 (1, 1), B 는 (10, 10) 에서 출발한다.
  */
 public class Solution {
-    static class Battery {
+    static class Charger {
         int row;
         int col;
-        int range;
+        boolean[][] rangeMap;
         int power;
 
-        public Battery(int row, int col, int range, int power) {
+        public Charger(int row, int col, boolean[][] rangeMap, int power) {
             this.row = row;
             this.col = col;
-            this.range = range;
+            this.rangeMap = rangeMap;
             this.power = power;
         }
     }
 
-    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    public static StringBuilder sb = new StringBuilder();
-    public static StringTokenizer st;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    public static int totalMoveCount;
-    public static int batteryCount;
+    static final int MAP_SIZE = 10;
+    static final int CHARGER_INFO = 2;
+    static final int CHARGER_IDX = 0;
+    static final int CHARGER_POWER = 1;
+    static int totalMoveTime, chargerCount;
+    static final int HUMAN_COUNT = 2;
+    static int[] humanA;
+    static int[] humanB;
+    static Charger[] chargerList;
 
-    public static int[] userAMoveList;
-    public static int[] userBMoveList;
+    static int maxPowerSum;
 
-    public static int[] userAPosition;
-    public static int[] userBPosition;
+    static final int[] DELTA_ROW = {0, -1, 0, 1, 0};
+    static final int[] DELTA_COL = {0, 0, 1, 0, -1};
 
-    public static Battery[] batteryList;
-    public static boolean[][][] chargeArea;
+    public static void goCharge() {
+        int aRow = 1;
+        int aCol = 1;
+        int bRow = MAP_SIZE;
+        int bCol = MAP_SIZE;
 
-    public static final int[] BATTERY_DELTA_ROW = {-1, 0, 1, 0};
-    public static final int[] BATTERY_DELTA_COL = {0, 1, 0, -1};
+        for (int moveIdx = 0; moveIdx <= totalMoveTime; moveIdx++) {
+            List<Integer> aConnectChargerList = new ArrayList<>();
+            List<Integer> bConnectChargerList = new ArrayList<>();
 
-    public static final int[] USER_DELTA_ROW = {0, -1, 0, 1, 0};
-    public static final int[] USER_DELTA_COL = {0, 0, 1, 0, -1};
+            for (int chargerIdx = 0; chargerIdx < chargerCount; chargerIdx++) {
+                Charger charger = chargerList[chargerIdx];
 
-    public static int totalCharge;
-
-    public static void batteryArea(Battery curBattery, int batteryIdx) {
-        Deque<int[]> visitQueue = new ArrayDeque<>();
-        visitQueue.offer(new int[] {curBattery.row, curBattery.col}); // 현재 배터리 위치부터 탐색 시작
-        chargeArea[batteryIdx][curBattery.row][curBattery.col] = true; // 영역 표시
-
-        // 방문 처리
-        boolean[][] visit = new boolean[10][10];
-        visit[curBattery.row][curBattery.col] = true;
-
-        // 벗어난 영역인지 체크
-        boolean areaStatus = false;
-        while(!visitQueue.isEmpty()) {
-            int[] curPosition = visitQueue.poll();
-            int curRow = curPosition[0];
-            int curCol = curPosition[1];
-
-            for(int deltaIdx = 0; deltaIdx < 4; deltaIdx++) {
-                int newRow = curRow + BATTERY_DELTA_ROW[deltaIdx];
-                int newCol = curCol + BATTERY_DELTA_COL[deltaIdx];
-
-                if(isArrange(newRow, newCol)) {
-                    continue;
+                if (charger.rangeMap[aRow][aCol]) {
+                    aConnectChargerList.add(chargerIdx);
                 }
 
-                // 현재 배터리의 range 를 넘었다면 접속 불가
-                if(isCharge(newRow, newCol, curBattery)) {
-                    areaStatus = true;
-                    break;
+                if (charger.rangeMap[bRow][bCol]) {
+                    bConnectChargerList.add(chargerIdx);
                 }
-
-                // 범위 안이라면
-                chargeArea[batteryIdx][newRow][newCol] = true;
-                visit[newRow][newCol] = true;
-                visitQueue.offer(new int[] { newRow, newCol }); // 방문 찜
             }
 
-            if(areaStatus) {
-                break;
+            int max = 0;
+            int temp = 0;
+
+            if (aConnectChargerList.size() > 0 && bConnectChargerList.size() > 0) {
+                for (int aConnectCharger : aConnectChargerList) {
+                    for (int bConnectCharger : bConnectChargerList) {
+                        temp = 0;
+                        if (aConnectCharger == bConnectCharger) {
+                            temp = chargerList[aConnectCharger].power;
+                        } else {
+                            temp += chargerList[aConnectCharger].power;
+                            temp += chargerList[bConnectCharger].power;
+                        }
+                        max = Math.max(max, temp);
+                    }
+                }
+            } else if (aConnectChargerList.size() > 0) {
+                for (int aConnectCharger : aConnectChargerList) {
+                    if (max < chargerList[aConnectCharger].power) {
+                        max = chargerList[aConnectCharger].power;
+                    }
+                }
+            } else if (bConnectChargerList.size() > 0) {
+                for (int bConnectCharger : bConnectChargerList) {
+                    if (max < chargerList[bConnectCharger].power) {
+                        max = chargerList[bConnectCharger].power;
+                    }
+                }
+            }
+            maxPowerSum += max;
+            if (moveIdx < totalMoveTime) {
+                aRow = aRow + DELTA_ROW[humanA[moveIdx]];
+                aCol = aCol + DELTA_COL[humanA[moveIdx]];
+                bRow = bRow + DELTA_ROW[humanB[moveIdx]];
+                bCol = bCol + DELTA_COL[humanB[moveIdx]];
             }
         }
-    }
-
-    public static boolean isCharge(int userRow, int userCol, Battery curBattery) {
-        return Math.abs(userRow - curBattery.row) + Math.abs(userCol - curBattery.col) > curBattery.range;
-    }
-
-    public static boolean isArrange(int row, int col) {
-        return row < 0 || col < 0 || row > 9 || col > 9;
     }
 
     public static void main(String[] args) throws IOException {
         int testCase = Integer.parseInt(br.readLine().trim());
 
-        for(int tc = 1; tc <= testCase; tc++) {
-            st = new StringTokenizer(br.readLine().trim());
-            totalMoveCount = Integer.parseInt(st.nextToken());
-            batteryCount = Integer.parseInt(st.nextToken());
+        for (int tc = 1; tc <= testCase; tc++) {
+            inputTestCase();
 
-            // 2. 사용자 A, B 의 이동 정보를 저장하는 userAMoveList, userBMoveList
-            st = new StringTokenizer(br.readLine().trim());
-            userAMoveList = new int[totalMoveCount];
-            for(int idx = 0; idx < totalMoveCount; idx++) {
-                userAMoveList[idx] = Integer.parseInt(st.nextToken());
-            }
-            st = new StringTokenizer(br.readLine().trim());
-            userBMoveList = new int[totalMoveCount];
-            for(int idx = 0; idx < totalMoveCount; idx++) {
-                userBMoveList[idx] = Integer.parseInt(st.nextToken());
-            }
+            maxPowerSum = 0;
+            goCharge();
 
-            // 3. 각 AP 의 정보를 저장하는 Battery 형 1차원 배열 batteryList
-            batteryList = new Battery[batteryCount];
-            for(int idx = 0; idx < batteryCount; idx++) {
-                // 문제의 row, col 은 반대
-                st = new StringTokenizer(br.readLine().trim());
-                int col = Integer.parseInt(st.nextToken()) - 1;
-                int row = Integer.parseInt(st.nextToken()) - 1;
-                int range = Integer.parseInt(st.nextToken());
-                int power = Integer.parseInt(st.nextToken());
-                batteryList[idx] = new Battery(row, col, range, power);
-            }
-
-            // 4. 각 배터리 별 배터리 영역을 저장하는 3차원 배열 chargeArea
-            chargeArea = new boolean[batteryCount][10][10];
-            // BFS 로 영역 만들기
-            for(int batteryIdx = 0; batteryIdx < batteryCount; batteryIdx++) {
-                batteryArea(batteryList[batteryIdx], batteryIdx);
-            }
-
-            // 충전 누적합의 최대값 계산
-            totalCharge = 0;
-            List<Integer> userABattery = new ArrayList<>(); // 현재 사용자 A 가 접속 가능한 배터리 저장
-            List<Integer> userBBattery = new ArrayList<>(); // 현재 사용자 B 가 접속 가능한 배터리 저장
-            // 사용자 위치 초기화
-            userAPosition = new int[] {0, 0};
-            userBPosition = new int[] {9, 9};
-            for(int moveIdx = 0; moveIdx <= totalMoveCount; moveIdx++) {
-                // 초기화
-                userABattery.clear();
-                userBBattery.clear();
-
-                // 각 사용자가 접속 가능한 배터리 찾기
-                for(int batteryIdx = 0; batteryIdx < batteryCount; batteryIdx++) {
-                    if(chargeArea[batteryIdx][userAPosition[0]][userAPosition[1]]) {
-                        userABattery.add(batteryIdx);
-                    }
-
-                    if(chargeArea[batteryIdx][userBPosition[0]][userBPosition[1]]) {
-                        userBBattery.add(batteryIdx);
-                    }
-                }
-
-                // 충전량 계산
-                int curCharge = 0;
-
-                // 사용자 A 는 접속 가능한 배터리가 없고 B 는 있는 경우부터 검사
-                if(userABattery.isEmpty() && !userBBattery.isEmpty()) {
-                    for(int batteryBIdx : userBBattery) {
-                        if(curCharge < batteryList[batteryBIdx].power) {
-                            curCharge = batteryList[batteryBIdx].power;
-                        }
-                    }
-                } else if(!userABattery.isEmpty() && userBBattery.isEmpty()) {
-                    for(int batteryAIdx : userABattery) {
-                        if(curCharge < batteryList[batteryAIdx].power) {
-                            curCharge = batteryList[batteryAIdx].power;
-                        }
-                    }
-                } else if(!userABattery.isEmpty() && !userBBattery.isEmpty()) {
-                    for(int batteryAIdx : userABattery) {
-                        for(int batteryBIdx : userBBattery) {
-                            // 두 사용자가 같은 배터리의 영역에 포함된 경우
-                            if(batteryAIdx == batteryBIdx) {
-                                // 한쪽에
-                                if(curCharge < batteryList[batteryAIdx].power) {
-                                    curCharge = batteryList[batteryAIdx].power;
-                                    continue;
-                                }
-                            } // 각자 다른 배터리 영역에 있다면
-                            else if (curCharge < batteryList[batteryAIdx].power + batteryList[batteryBIdx].power) {
-                                curCharge = batteryList[batteryAIdx].power + batteryList[batteryBIdx].power;
-                            }
-                        }
-                    }
-                }
-
-                totalCharge += curCharge;
-
-                // 마지막 충전량까지 합하고 종료
-                if(moveIdx == totalMoveCount) {
-                    break;
-                }
-
-                // 사용자 위치 이동
-                userAPosition[0] += USER_DELTA_ROW[userAMoveList[moveIdx]];
-                userAPosition[1] += USER_DELTA_COL[userAMoveList[moveIdx]];
-
-                userBPosition[0] += USER_DELTA_ROW[userBMoveList[moveIdx]];
-                userBPosition[1] += USER_DELTA_COL[userBMoveList[moveIdx]];
-            }
-
-            sb.append("#").append(tc).append(" ").append(totalCharge).append("\n");
+            sb.append("#").append(tc).append(" ").append(maxPowerSum).append("\n");
         }
 
         System.out.println(sb);
+    }
+
+    public static void inputTestCase() throws IOException {
+        st = new StringTokenizer(br.readLine().trim());
+        totalMoveTime = Integer.parseInt(st.nextToken());
+        chargerCount = Integer.parseInt(st.nextToken());
+
+        humanA = new int[totalMoveTime];
+        humanB = new int[totalMoveTime];
+        st = new StringTokenizer(br.readLine().trim());
+        for (int idx = 0; idx < totalMoveTime; idx++) {
+            humanA[idx] = Integer.parseInt(st.nextToken());
+        }
+
+        st = new StringTokenizer(br.readLine().trim());
+        for (int idx = 0; idx < totalMoveTime; idx++) {
+            humanB[idx] = Integer.parseInt(st.nextToken());
+        }
+
+        chargerList = new Charger[chargerCount];
+        for (int chargerIdx = 0; chargerIdx < chargerCount; chargerIdx++) {
+            st = new StringTokenizer(br.readLine().trim());
+            int inputCol = Integer.parseInt(st.nextToken());
+            int inputRow = Integer.parseInt(st.nextToken());
+            int range = Integer.parseInt(st.nextToken());
+            int power = Integer.parseInt(st.nextToken());
+
+            boolean[][] rangeMap = new boolean[MAP_SIZE+1][MAP_SIZE+1];
+            for(int row = 1; row <= MAP_SIZE; row++) {
+                for (int col = 1; col <= MAP_SIZE; col++) {
+                    int dis = Math.abs(inputRow - row) + Math.abs(inputCol - col);
+                    if(dis <= range) {
+                        rangeMap[row][col] = true;
+                    }
+                }
+            }
+
+            chargerList[chargerIdx] = new Charger(inputRow, inputCol, rangeMap, power);
+        }
     }
 }
