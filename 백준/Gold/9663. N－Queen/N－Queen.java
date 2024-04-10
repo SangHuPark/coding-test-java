@@ -1,73 +1,58 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 
-/**
- * [ main() ]
- * 1. 체스판의 크기(퀸의 개수) 를 입력받는다.
- * 2. 체스판을 생성한다.
- *
- * [ setChess() ]
- * 3. 모든 행에 퀸을 놓았다면 카운팅 후 종료
- * 4. 0 ~ N-1 열까지 현재 행에 퀸을 놓는다.
- *  4-1. 현재 (행, 열) 이 공격로 라면 넘겨준다.
- *  4-1. 놓은 위치를 기반으로 공격로를 생성한다.
- *  4-2. 다음 행과 현재 공격로 정보를 전달하며 재귀호출한다.
- *
- * [ makeAttack() ]
- * 5. 행, 열, 현재 맵을 받아 현재 맵에 현재 위치에서의 열과 대각선을 공격로 체크 후 반환한다.
- */
 public class Main {
-    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    public static StringBuilder sb = new StringBuilder();
-    public static StringTokenizer st;
 
-    static int chessMapSize, queenCount;
-    static int[] chessColArr;
+    public static int[] arr;
+    public static int N;
+    public static int count = 0;
 
-    static int successCount;
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        N = in.nextInt();
+        arr = new int[N];
 
-    public static void setQueen(int selectRow) {
-        if (selectRow == queenCount) {
-            successCount++;
+        nQueen(0);
+        System.out.println(count);
+    }
+
+    public static void nQueen(int depth) {
+        // 모든 원소를 다 채운 상태면 count 증가 및 return
+        // depth 가 곧 놓은 퀸의 갯수.
+        if (depth == N) {
+            count++;
             return;
         }
+        for (int i = 0; i < N; i++) {
+            arr[depth] = i;
+            // arr[0]은 곧 첫번째 열을 뜻한다. 0 1 2 3은 차례대로 첫번째부터 네번째까지의 행을 뜻한다.
+            // nQueen(depth + 1); 상태면 arr[1]에 0,1,2,3 이 차례대로 대입된다.
+            // 우선 arr[1]에 0이 대입되고 Possibility(depth) 이 실행된다. 이때 depth는 1 이다.
 
-        for (int col = 0; col < chessMapSize; col++) {
-            chessColArr[selectRow] = col;
-
-            if (isPossible(selectRow)) {
-                setQueen(selectRow + 1);
+            // 여기서 노드의 유망성을 파악하여 백트랙킹 기법을 사용합니다.
+            // 놓을 수 있는 위치일 경우 재귀호출을 하여 계속 dfs 실행
+            if (Possibility(depth)) {
+                nQueen(depth + 1);
             }
         }
     }
+    public static boolean Possibility(int depth) {
+        for (int i = 0; i < depth; i++) {
+            // 첫번째 depth은 0이 들어와서 0<0 은 for문의 조건이 성립이 안되기 때문에 무조건 true가 반환된다.
+            // 두번째 depth은 depth+1 상태이기 때문에 1이 들어온다.
 
-    public static boolean isPossible(int selectRow) {
-        for (int row = 0; row < selectRow; row++) {
-            // 같은 열에 이미 존재한다면 false
-            if(chessColArr[row] == chessColArr[selectRow]) {
+            // 해당 열의 행과 i열의 행이 일치할경우 (같은 행에 존재할 경우)
+            // arr[i] 의 경우 arr[depth]보다 이전의 열이다. for문이 계속 돌아감으로.
+            // 이 이전의 열(arr[i])들이 현재의 열(arr[depth])과 동일한경우 false가 반환되고 탐색을 멈춘다.
+            if (arr[depth] == arr[i]) {
                 return false;
             }
-
-            // 대각선에 존재한다면 false
-            if(Math.abs(row - selectRow) == Math.abs(chessColArr[row] - chessColArr[selectRow])) {
+            //Math.abs() -> 절대값을 반환하는 함수.
+            //열의 차와 행의 차가 같을 경우 대각선에 놓여있다
+            //위에 첨부한 그림을 통해서 이해 바람.
+            else if (Math.abs(depth - i) == Math.abs(arr[depth] - arr[i])) {
                 return false;
             }
         }
-
         return true;
-    }
-
-    public static void main(String[] args) throws IOException {
-        chessMapSize = Integer.parseInt(br.readLine().trim());
-        queenCount = chessMapSize;
-
-        chessColArr = new int[chessMapSize];
-        successCount = 0;
-
-        setQueen(0);
-
-        System.out.println(successCount);
     }
 }
