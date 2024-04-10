@@ -5,12 +5,15 @@ import java.util.Arrays;
 import java.util.StringTokenizer;
 
 /**
- * 1. 정점의 개수 V, 간선의 개수 E 를 저장하는 vertexCount, edgeCount
- * 2. from, to, weight 정보를 저장하는 edgeList
- *  2-1. from, to, weight 를 멤버로 가진 Edge 클래스
- * 3. 크루스칼 알고리즘을 이용한 최소 신장 트리 생성
- *  3-1. 정점 간 합집합 단계에서 부모가 같다면 싸이클을 생성하므로 연결 불가
- *  3-2. 그렇지 않다면 가중치 누적 계산
+ * [ inputTestCase() ]
+ * 1. 정점의 개수와 간선의 개수를 입력받는다.
+ * 2. 간선의 정보를 입력받는다.
+ *  2-1. from, to, weight 를 저장하는 Edge 클래스 타입의 배열
+ *
+ * [ main() ]
+ * 3. 간선을 돌며 최소 신장 트리를 완성한다.
+ *  3-1. union 의 결과가 참이면 weight 를 누적 하고 연결 횟수를 카운팅한다.
+ *  3-2. 연결 횟수가 정점 - 1 개이면 종료한다.
  */
 public class Main {
     static class Edge implements Comparable<Edge> {
@@ -30,55 +33,77 @@ public class Main {
         }
     }
 
-    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    public static StringTokenizer st;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    public static int vertexCount, edgeCount;
+    static int nodeNum, edgeCount;
+    static Edge[] edgeList;
 
-    public static Edge[] edgeList;
+    static int[] parents;
 
-    public static int[] parents;
+    public static boolean union(int rootA, int rootB) {
+        int parentA = find(rootA);
+        int parentB = find(rootB);
 
-    public static boolean union(int from, int to) {
-        int fromParent = find(from);
-        int toParent = find(to);
-
-        if(fromParent == toParent) {
+        if (parentA == parentB) {
             return false;
         }
 
-        if(fromParent > toParent) {
-            parents[toParent] = fromParent;
-            return true;
+        if (parentA > parentB) {
+            parents[parentB] = parentA;
+        } else {
+            parents[parentA] = parentB;
         }
 
-        parents[fromParent] = toParent;
         return true;
     }
 
-    public static int find(int idx) {
-        if(parents[idx] == idx) {
-            return idx;
+    public static int find(int root) {
+        if (parents[root] == root) {
+            return root;
         }
 
-        return parents[idx] = find(parents[idx]);
+        return parents[root] = find(parents[root]);
     }
 
-    public static void make() {
-        parents = new int[vertexCount+1];
-
-        for(int idx = 0; idx < vertexCount + 1; idx++) {
+    public static void makeSet() {
+        parents = new int[nodeNum+1];
+        for (int idx = 0; idx < nodeNum+1; idx++) {
             parents[idx] = idx;
         }
     }
 
     public static void main(String[] args) throws IOException {
+        inputTestCase();
+
+        Arrays.sort(edgeList);
+        makeSet();
+
+        int connectCount = 0;
+        int weightSum = 0;
+        for (Edge edge : edgeList) {
+
+            if(union(edge.from, edge.to)) {
+                weightSum += edge.weight;
+                connectCount++;
+            }
+
+            if (connectCount == nodeNum-1) {
+                break;
+            }
+        }
+
+        System.out.println(weightSum);
+    }
+
+    public static void inputTestCase() throws IOException {
         st = new StringTokenizer(br.readLine().trim());
-        vertexCount = Integer.parseInt(st.nextToken());
+        nodeNum = Integer.parseInt(st.nextToken());
         edgeCount = Integer.parseInt(st.nextToken());
 
         edgeList = new Edge[edgeCount];
-        for(int idx = 0; idx < edgeCount; idx++) {
+        for (int idx = 0; idx < edgeCount; idx++) {
             st = new StringTokenizer(br.readLine().trim());
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
@@ -86,20 +111,5 @@ public class Main {
 
             edgeList[idx] = new Edge(from, to, weight);
         }
-
-        Arrays.sort(edgeList);
-
-        make();
-
-        long totalWeight = 0;
-        for(Edge edge : edgeList) {
-            if(!union(edge.from, edge.to)) {
-                continue;
-            }
-
-            totalWeight += edge.weight;
-        }
-
-        System.out.println(totalWeight);
     }
 }
