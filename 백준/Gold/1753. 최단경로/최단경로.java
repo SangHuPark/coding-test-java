@@ -58,6 +58,9 @@ public class Main {
 
         while (!dijkstraQ.isEmpty()) {
             Node curNode = dijkstraQ.poll();
+            
+            if (minWeightList[curNode.to] < curNode.weight)
+                continue;
 
             for (int next = 0; next < nodeList.get(curNode.to).size(); next++) {
                 Node nextNode = nodeList.get(curNode.to).get(next);
