@@ -1,112 +1,112 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
- * 1. 정점의 개수 V 와 간선의 개수 E
- * 2. 시작 정점을 저장하는 start
- * 3. 간선의 정보를 저장하는 edgeList
- *  3-1. 인접 정보를 나타내는 Node 클래스
- * 4. 다익스트라 알고리즘을 이용한 최단비용 갱신
- *  4-1. 이동 가능한 정점 중 최소 비용 정점 찾기
- *  4-2. 선택한 정점을 기준으로 최소 비용 갱신
- * 5. 갱신한 최소 비용 출력
+ * [ inputTestCase() ]
+ * 1. 정점의 개수와 간선의 개수를 입력받는다.
+ * 2. 시작 정점의 번호를 입력받는다.
+ * 3. 방문한 정점의 가중치 최솟값을 저장할 배열을 생성한다.
+ *  3-1. MAX_VALUE 로 초기화
+ *  3-2. 정점 리스트 초기화
+ * 4. 간선의 개수 만큼 간선의 정보를 입력받는다.
+ *
+ * [ connectDijkstra() ]
+ * 5. 다익스트라 알고리즘을 통한 정점 중심 그래프 탐색
+ *  5-1. 시작 정점의 최소 가중치 0 으로 업데이트
+ *  5-2. 현재 정점에서 연결된 간선을 따라 탐색
+ *      5-2-1. 방문하지 않은 정점이면서 현재 최소 가중치보다 현재 가중치 + 해당 정점으로의 가중치 값이 더 작다면
+ *          5-2-1-1. 해당 정점으로의 최소 가중치 업데이트
+ *          5-2-1-2. 다음 방문을 위한 큐에 삽입
+ *
  */
 public class Main {
-    static class Node {
+    static class Node implements Comparable<Node> {
         int to;
         int weight;
-        Node link;
 
-        public Node(int to, int weight, Node link) {
+        public Node(int to, int weight) {
             this.to = to;
             this.weight = weight;
-            this.link = link;
+        }
+
+        @Override
+        public int compareTo(Node o) {
+            return Integer.compare(this.weight, o.weight);
         }
     }
 
-    public static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    public static StringBuilder sb = new StringBuilder();
-    public static StringTokenizer st;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    public static int V, E;
+    static int nodeCount, edgeCount;
+    static int startNode;
+    static List<List<Node>> nodeList;
+    static int[] minWeightList;
 
-    public static int start;
+    static PriorityQueue<Node> dijkstraQ;
 
-    public static Node[] edgeList;
+    public static void connectDijstra(int startNode) {
+        dijkstraQ = new PriorityQueue<>();
+        boolean[] visited = new boolean[nodeCount + 1];
+
+        minWeightList[startNode] = 0;
+        dijkstraQ.add(new Node(startNode, 0));
+        visited[startNode] = true;
+
+        while (!dijkstraQ.isEmpty()) {
+            Node curNode = dijkstraQ.poll();
+
+            for (int next = 0; next < nodeList.get(curNode.to).size(); next++) {
+                Node nextNode = nodeList.get(curNode.to).get(next);
+
+                if (!visited[nextNode.to] && curNode.weight + nextNode.weight < minWeightList[nextNode.to]) {
+                    minWeightList[nextNode.to] = curNode.weight + nextNode.weight;
+
+                    dijkstraQ.add(new Node(nextNode.to, minWeightList[nextNode.to]));
+                }
+            }
+        }
+    }
 
     public static void main(String[] args) throws IOException {
-        // 1. 정점의 개수 V 와 간선의 개수 E
+        inputTestCase();
+
+        connectDijstra(startNode);
+
+        for (int weightIdx = 1; weightIdx < nodeCount+1; weightIdx++) {
+            if (minWeightList[weightIdx] == Integer.MAX_VALUE) {
+                sb.append("INF").append("\n");
+            } else {
+                sb.append(minWeightList[weightIdx]).append("\n");
+            }
+        }
+
+        System.out.println(sb);
+    }
+
+    public static void inputTestCase() throws IOException {
         st = new StringTokenizer(br.readLine().trim());
-        V = Integer.parseInt(st.nextToken());
-        E = Integer.parseInt(st.nextToken());
+        nodeCount = Integer.parseInt(st.nextToken());
+        minWeightList = new int[nodeCount+1];
+        edgeCount = Integer.parseInt(st.nextToken());
 
-        // 2. 시작 정점을 저장하는 start
-        start = Integer.parseInt(br.readLine().trim());
+        startNode = Integer.parseInt(br.readLine().trim());
+        nodeList = new ArrayList<>();
+        for (int nodeIdx = 0; nodeIdx < nodeCount+1; nodeIdx++) {
+            minWeightList[nodeIdx] = Integer.MAX_VALUE;
+            nodeList.add(new ArrayList<>());
+        }
 
-        // 3. 간선의 정보를 저장하는 edgeList
-        edgeList = new Node[V+1];
-        for (int idx = 0; idx < E; idx++) {
+        for (int idx = 0; idx < edgeCount; idx++) {
             st = new StringTokenizer(br.readLine().trim());
             int from = Integer.parseInt(st.nextToken());
             int to = Integer.parseInt(st.nextToken());
             int weight = Integer.parseInt(st.nextToken());
 
-            edgeList[from] = new Node(to, weight, edgeList[from]);
+            nodeList.get(from).add(new Node(to, weight));
         }
-
-        // 방문 여부를 저장하는 visited
-        boolean[] visited = new boolean[V+1];
-        // start 부터 도착지까지 최소 거리를 저장하는 minDist
-        int[] minDist = new int[V+1];
-        // 최소 거리 무한대 초기화
-        for(int idx = 0; idx < V+1; idx++) {
-            minDist[idx] = Integer.MAX_VALUE;
-        }
-
-        // start 비용 0 초기화
-        minDist[start] = 0;
-
-        // 4. 다익스트라 알고리즘을 이용한 최단비용 갱신
-        for(int idx = 0; idx < V; idx++) {
-            // 4-1. 이동 가능한 정점 중 최소 비용 정점 찾기
-            int minNodeWeight = Integer.MAX_VALUE; // 최소 비용 저장
-            int minNodeIdx = 0; // 그때의 정점 번호 저장
-
-            for(int searchIdx = 1; searchIdx < V+1; searchIdx++) {
-                // 방문하지 않은 정점 중 최소 비용을 가진 정점 찾기
-                if(!visited[searchIdx] && minDist[searchIdx] < minNodeWeight) {
-                    minNodeWeight = minDist[searchIdx];
-                    minNodeIdx = searchIdx;
-                }
-            }
-
-            // 최소 비용을 가진 정점이 없다면 백트래킹
-            if(minNodeIdx == 0) {
-                break;
-            }
-
-            // 최소 비용을 가진 정점 방문 처리
-            visited[minNodeIdx] = true;
-
-            // 4-2. 선택한 정점을 기준으로 최소 비용 갱신
-            for(Node next = edgeList[minNodeIdx]; next != null; next = next.link) {
-                // 현재 저장된 비용과 새로운 정점을 경유해서 가는 비용 중 작은 값으로 갱신
-                minDist[next.to] = Math.min(minDist[next.to], minNodeWeight + next.weight);
-            }
-        }
-
-        // 5. 갱신한 최소 비용 출력
-        for (int idx = 1; idx < V+1; idx++) {
-            if(minDist[idx] == Integer.MAX_VALUE) {
-                sb.append("INF");
-            } else {
-                sb.append(minDist[idx]);
-            }
-            sb.append("\n");
-        }
-
-        System.out.println(sb);
     }
 }
