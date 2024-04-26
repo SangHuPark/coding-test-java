@@ -4,73 +4,75 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 /**
- * 1. 표의 크기를 저장하는 arrayLength
- * 2. 합을 하는 횟수를 저장하는 sumCount
- * 3. 입력받은 정수형 2차원 배열의 행별 누적합을 저장하는 prefixSumArray
- * 4. 첫 번째 좌표를 저장하는 firstRow, firstCol
- * 	4-1. 2차원 배열의 인덱스에 맞춰 각각 -1 한 값 저장
- * 5. 두 번째 좌표를 저장하는 lastRow, lastCol
- * 	5-1. 2차원 배열의 인덱스에 맞춰 각각 -1 한 값 저장
- * 6. 구간합을 저장하는 prefixSumTotal
+ * [ inputTestCase() ]
+ * 1. 맵의 크기, 합을 구하는 횟수를 입력받는다.
+ * 2. 맵의 정보를 입력받는다.
+ *
+ * [ makePrefixSum() ]
+ * 3. 맵을 돌며 행의 누적합을 저장하는 배열을 만든다.
+ *
+ * [ main() ]
+ * 4. 계산할 범위의 시작점과 끝점을 입력받는다.
+ *  4-1. 시작점의 row 부터 끝점의 row 를 반복한다.
+ *      4-1-1. (row, 끝점 col) - (row, 시작점 col-1) 을 누적한다.
+ * 5. 구간합 출력
  */
 public class Main {
-    public static BufferedReader br;
-    public static StringBuilder sb;
-    public static StringTokenizer st;
+    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringBuilder sb = new StringBuilder();
+    static StringTokenizer st;
 
-    public static int arrayLength;
-    public static int sumCount;
+    static int mapSize, calCount;
+    static int[][] map;
+    static int[][] prefixSumMap;
 
-    public static int[][] prefixSumArray;
+    static int areaPrefixSum;
 
-    public static int firstRow, firstCol, lastRow, lastCol;
+    public static void makePrefixSum() {
+        prefixSumMap = new int[mapSize+1][mapSize+1];
 
-    public static int prefixSumTotal;
-
-    public static void main(String[] args) throws IOException {
-        br = new BufferedReader(new InputStreamReader(System.in));
-        sb = new StringBuilder();
-
-        st = new StringTokenizer(br.readLine().trim());
-        // 1. 표의 크기를 저장하는 arrayLength
-        arrayLength = Integer.parseInt(st.nextToken());
-
-        // 2. 합을 하는 횟수를 저장하는 sumCount
-        sumCount = Integer.parseInt(st.nextToken());
-
-        // 3. 입력받은 정수의 누적합을 저장하는 prefixSumArray
-        // 인덱스의 시작을 (1, 1) 로 두기 위해 arrayLength+1 크기로 저장
-        prefixSumArray = new int[arrayLength+1][arrayLength+1];
-
-        // 행별 누적합 저장
-        for(int row = 1; row <= arrayLength; row++) {
-            st = new StringTokenizer(br.readLine().trim());
-
-            for(int col = 1; col <= arrayLength; col++) {
-                prefixSumArray[row][col] = prefixSumArray[row][col-1] + Integer.parseInt(st.nextToken());
+        for (int row = 1; row < mapSize+1; row++) {
+            for (int col = 1; col < mapSize+1; col++) {
+                prefixSumMap[row][col] = prefixSumMap[row][col-1] + map[row][col];
             }
         }
+    }
 
-        for(int sc = 1; sc <= sumCount; sc++) {
+    public static void main(String[] args) throws IOException {
+        inputTestCase();
+
+        makePrefixSum();
+
+        for (int idx = 0; idx < calCount; idx++) {
+            areaPrefixSum = 0;
+
             st = new StringTokenizer(br.readLine().trim());
+            int startRow = Integer.parseInt(st.nextToken());
+            int startCol = Integer.parseInt(st.nextToken());
+            int endRow = Integer.parseInt(st.nextToken());
+            int endCol = Integer.parseInt(st.nextToken());
 
-            // 4. 첫 번째 좌표를 저장하는 firstRow, firstCol
-            firstRow = Integer.parseInt(st.nextToken());
-            firstCol = Integer.parseInt(st.nextToken());
-
-            // 5. 두 번째 좌표를 저장하는 lastRow, lastCol
-            lastRow = Integer.parseInt(st.nextToken());
-            lastCol = Integer.parseInt(st.nextToken());
-
-            // 6. 구간합을 저장하는 prefixSumTotal
-            for(int row = firstRow; row <= lastRow; row++) { // 두 좌표가 같다면 한 번만 빼준다.
-                prefixSumTotal += prefixSumArray[row][lastCol] - prefixSumArray[row][firstCol-1];
+            for (int row = startRow; row <= endRow; row++) {
+                areaPrefixSum += prefixSumMap[row][endCol] - prefixSumMap[row][startCol-1];
             }
 
-            sb.append(prefixSumTotal).append("\n");
-            prefixSumTotal = 0;
+            sb.append(areaPrefixSum).append("\n");
         }
 
         System.out.println(sb);
+    }
+
+    public static void inputTestCase() throws IOException {
+        st = new StringTokenizer(br.readLine().trim());
+        mapSize = Integer.parseInt(st.nextToken());
+        calCount = Integer.parseInt(st.nextToken());
+
+        map = new int[mapSize+1][mapSize+1];
+        for (int row = 1; row < mapSize+1; row++) {
+            st = new StringTokenizer(br.readLine().trim());
+            for (int col = 1; col < mapSize + 1; col++) {
+                map[row][col] = Integer.parseInt(st.nextToken());
+            }
+        }
     }
 }
