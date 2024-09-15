@@ -14,8 +14,9 @@ public class Main {
     public static int solution() {
         int result = 99;
 
-        int ccw = (p1[0] * p2[1]) + (p2[0] * p3[1]) + (p3[0] * p1[1]) - ((p2[0] * p1[1]) + (p3[0] * p2[1]) + (p1[0] * p3[1]));
+//        int ccw = (p1[0] * p2[1]) + (p2[0] * p3[1]) + (p3[0] * p1[1]) - ((p2[0] * p1[1]) + (p3[0] * p2[1]) + (p1[0] * p3[1]));
 
+        int ccw = (p2[0] - p1[0]) * (p3[1] - p2[1]) - (p3[0] - p2[0]) * (p2[1] - p1[1]);
 //        System.out.println(ccw);
 
         if (ccw < 0) {
