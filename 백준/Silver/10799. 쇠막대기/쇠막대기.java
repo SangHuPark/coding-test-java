@@ -1,32 +1,34 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Stack;
 
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static StringBuilder sb = new StringBuilder();
 
     static String pipe;
-    static Stack<Character> pipes;
 
     public static void main(String[] args) throws IOException {
         init();
 
-        int openCnt = 0;
         int sumPiece = 0;
-        for (char piece : pipe.toCharArray()) {
+        int pipeStartCount = 0;
+        
+        for (int idx = 0; idx < pipe.length(); idx++) {
+            char piece = pipe.charAt(idx);
+
             if (piece == '(') {
-                openCnt++;
-                pipes.push('(');
-            } else if (piece == ')') {
-                openCnt--;
-                if (pipes.peek() == '(') {
-                    sumPiece += openCnt;
-                } else {
+                pipeStartCount++;
+            } // piece == ')'
+            else {
+                pipeStartCount--;
+
+                // 레이저
+                if (pipe.charAt(idx - 1) == '(') {
+                    sumPiece += pipeStartCount;
+                } // 막대기 끝 처리
+                else {
                     sumPiece++;
                 }
-                pipes.push(')');
             }
         }
 
@@ -35,6 +37,5 @@ public class Main {
 
     public static void init() throws IOException {
         pipe = br.readLine().trim();
-        pipes = new Stack<>();
     }
 }
