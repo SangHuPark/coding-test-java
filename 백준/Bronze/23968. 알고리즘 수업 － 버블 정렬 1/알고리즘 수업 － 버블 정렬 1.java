@@ -15,7 +15,7 @@ public class Main {
 
         int changeCnt = 0;
         for (int compareCount = 0; compareCount < N; compareCount++) {
-            for (int idx = 0; idx < N - 1; idx++) {
+            for (int idx = 0; idx < N - compareCount -1; idx++) {
                 if (bubbleSort[idx] > bubbleSort[idx+1]) {
                     changeCnt++;
 
