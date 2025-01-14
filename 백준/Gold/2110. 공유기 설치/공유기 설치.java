@@ -22,7 +22,6 @@ public class Main {
     static int start, end;
     static int answer;
 
-    // 현재 mid 를 가장 인접한 공유기로 고르면 가능한지 체크
     public static int getCount(int target) {
         int cnt = 1;
         int lastDistance = disArr[0];
@@ -44,7 +43,7 @@ public class Main {
 
             int wifiCnt = getCount(mid);
             if (wifiCnt >= C) {
-                answer = Math.max(answer, mid);
+                answer = mid;
                 start = mid + 1;
             } else {
                 end = mid - 1;
