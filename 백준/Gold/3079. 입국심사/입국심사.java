@@ -37,7 +37,7 @@ public class Main {
     }
 
     public static void binarySearch() {
-        long start = judgeTimeArr[0], end = (long) M * judgeTimeArr[0];
+        long start = 1, end = (long) M * judgeTimeArr[0];
         totalTime = end;
 
         while (start <= end) {
