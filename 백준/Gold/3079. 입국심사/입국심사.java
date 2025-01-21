@@ -24,26 +24,24 @@ public class Main {
     static long totalTime;
     static int[] judgeTimeArr;
 
-    public static int getCount(long capacity) {
-        int judgeCnt = 0;
+    public static long getCount(long capacity) {
+        long judgeCnt = 0;
 
         for (int idx = 0; idx < N; idx++) {
-            judgeCnt += (int) (capacity / judgeTimeArr[idx]);
-            if (judgeCnt > M)
-                break;
+            judgeCnt += (long) (capacity / judgeTimeArr[idx]);
         }
 
         return judgeCnt;
     }
 
     public static void binarySearch() {
-        long start = 1, end = (long) M * judgeTimeArr[0];
+        long start = judgeTimeArr[0], end = (long) M * judgeTimeArr[0];
         totalTime = end;
 
         while (start <= end) {
             long mid = start + ((end - start) >> 1);
 
-            int cnt = getCount(mid);
+            long cnt = getCount(mid);
             if (cnt >= M) {
                 totalTime = mid;
                 end = mid - 1;
