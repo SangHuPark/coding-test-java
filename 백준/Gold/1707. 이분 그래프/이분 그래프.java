@@ -27,12 +27,10 @@ public class Main {
                 // 인접한 현재 기준 노드와 반대 집합 그룹으로 분류
                 checked[next] = checked[node] * (-1);
                 dfs(next);
-                if (flag)
-                    return;
+//                if (flag)
+//                    return;
             }
         }
-
-        return;
     }
 
     public static void main(String[] args) throws IOException {
