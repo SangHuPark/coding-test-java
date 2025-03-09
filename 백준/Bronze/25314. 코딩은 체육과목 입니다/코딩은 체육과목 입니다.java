@@ -12,7 +12,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         byteN = Integer.parseInt(br.readLine().trim());
 
-        int size = byteN / 4;
+        int size = byteN >> 2;
         for (int idx = 0; idx < size; idx++) {
             sb.append("long ");
         }
