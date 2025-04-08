@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -8,8 +7,7 @@ public class Main {
     static StringTokenizer st;
 
     static int coinCount, goal;
-    static int[] coins;
-    static int[][] dp;
+    static int[] coins, dp;
 
     public static void main(String[] args) throws IOException {
         int testCase = Integer.parseInt(br.readLine().trim());
@@ -19,15 +17,17 @@ public class Main {
 
             for (int idx = 1; idx <= coinCount; idx++) {
                 for (int money = 0; money <= goal; money++) {
-                    dp[idx][money] = dp[idx-1][money];
+//                    dp[idx][money] = dp[idx-1][money];
 
                     int useCurCoinIdx = money - coins[idx];
-                    if (useCurCoinIdx >= 0)
-                        dp[idx][money] += dp[idx][useCurCoinIdx];
+                    if (useCurCoinIdx >= 0) {
+                        dp[money] += dp[useCurCoinIdx];
+                    }
+
                 }
             }
 
-            sb.append(dp[coinCount][goal] + "\n");
+            sb.append(dp[goal] + "\n");
         }
         System.out.println(sb);
 
@@ -44,7 +44,7 @@ public class Main {
 
         goal = Integer.parseInt(br.readLine().trim());
 
-        dp = new int[coinCount+1][goal + 1];
-        dp[0][0] = 1;
+        dp = new int[goal + 1];
+        dp[0] = 1; // 0원으로 0원 만드는 경우만 1 가지로 초기화
     }
 }
