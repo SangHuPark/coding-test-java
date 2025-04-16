@@ -12,18 +12,16 @@ public class Main {
         init();
 
         int answer = 1_000_000;
-        int start = 0, end = 0, length = 1;
-        long sum = nums[0];
-        while (end < N && start <= end) {
-            if (sum >= S) {
+        int start = 0, length = 0, sum = 0;
+        for (int end = 0; end < N; end++) {
+            sum += nums[end];
+            length++;
+
+            while (sum >= S) {
                 answer = Math.min(answer, length);
-                sum -= nums[start++];
+                sum -= nums[start];
+                start++;
                 length--;
-            } else {
-                end++;
-                if (end < N)
-                    sum += nums[end];
-                length++;
             }
         }
         if (answer == 1_000_000)
