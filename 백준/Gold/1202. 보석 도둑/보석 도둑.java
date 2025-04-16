@@ -1,82 +1,69 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.*;
 
 public class Main {
-    static class Gem {
+    static class Crystal {
         int weight;
         int cost;
 
-        Gem (int weight, int cost) {
+        Crystal(int weight, int cost) {
             this.weight = weight;
             this.cost = cost;
-        }
-
-        public String toString() {
-            return "[ " + this.weight + ", " + this.cost + " ]";
         }
     }
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
 
-    static int gemCnt, bagCnt;
-    static Gem[] gemList;
-    static int[] bagList;
-    static PriorityQueue<Integer> pq;
-
-    static long costPrefixSum;
+    static int N, K;
+    static Crystal[] crystals;
+    static int[] bags;
 
     public static void main(String[] args) throws IOException {
         init();
 
-        costPrefixSum = 0;
-        pq = new PriorityQueue<>(new Comparator<Integer>() {
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return (-1) * Integer.compare(o1, o2);
-            }
+        PriorityQueue<Integer> answer = new PriorityQueue<>((o1, o2) -> {
+            return (-1) * Integer.compare(o1, o2);
         });
-        for (int idx = 0, gem = 0; idx < bagCnt; idx++) {
-            while (gem < gemCnt && gemList[gem].weight <= bagList[idx]) {
-                pq.add(gemList[gem++].cost);
+
+        long sum = 0;
+        int cristalIdx = 0;
+        for (int bagIdx = 0; bagIdx < K; bagIdx++) {
+            while (cristalIdx < N && crystals[cristalIdx].weight <= bags[bagIdx]) {
+                answer.add(crystals[cristalIdx++].cost);
             }
 
-            if (!pq.isEmpty()) {
-                costPrefixSum += pq.poll();
-            }
+            if (!answer.isEmpty())
+                sum += answer.poll();
         }
 
-        System.out.println(costPrefixSum);
+        System.out.println(sum);
+
     }
 
     public static void init() throws IOException {
         st = new StringTokenizer(br.readLine().trim());
-        gemCnt = Integer.parseInt(st.nextToken());
-        bagCnt = Integer.parseInt(st.nextToken());
+        N = Integer.parseInt(st.nextToken());
+        K = Integer.parseInt(st.nextToken());
 
-        gemList = new Gem[gemCnt];
-        for (int idx = 0; idx < gemCnt; idx++) {
+        crystals = new Crystal[N];
+        for (int idx = 0; idx < N; idx++) {
             st = new StringTokenizer(br.readLine().trim());
             int weight = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
 
-            gemList[idx] = new Gem(weight, cost);
+            crystals[idx] = new Crystal(weight, cost);
         }
-        Arrays.sort(gemList, new Comparator<Gem>() {
-            @Override
-            public int compare(Gem o1, Gem o2) {
-                if (o1.weight == o2.weight)
-                    return (-1) * Integer.compare(o1.cost, o2.cost);
+        Arrays.sort(crystals, (o1, o2) -> {
+            if (o1.weight == o2.weight)
+                return (-1) * Integer.compare(o1.cost, o2.cost);
 
-                return Integer.compare(o1.weight, o2.weight);
-            }
+            return Integer.compare(o1.weight, o2.weight);
         });
 
-        bagList = new int[bagCnt];
-        for (int idx = 0; idx < bagCnt; idx++) {
-            bagList[idx] = Integer.parseInt(br.readLine().trim());
+        bags = new int[K];
+        for (int idx = 0; idx < K; idx++) {
+            bags[idx] = Integer.parseInt(br.readLine().trim());
         }
-        Arrays.sort(bagList);
+        Arrays.sort(bags);
     }
 }
