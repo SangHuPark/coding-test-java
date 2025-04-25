@@ -35,7 +35,7 @@ where left(p.duration_type, 2) = '30';
 SELECT 
     c.car_id, 
     c.car_type, 
-    FLOOR(c.daily_fee * 30 * (1 - CAST(REPLACE(discount_rate, '%', '') AS DECIMAL(5,2)) / 100)) AS fee
+    round(c.daily_fee * 30 * (1 - p.discount_rate / 100)) AS fee
 FROM CAR_RENTAL_COMPANY_CAR c
 JOIN CAR_RENTAL_COMPANY_DISCOUNT_PLAN p
     ON c.car_type = p.car_type AND p.duration_type = '30일 이상'
@@ -45,5 +45,5 @@ WHERE c.car_type IN ('세단', 'SUV')
       FROM CAR_RENTAL_COMPANY_RENTAL_HISTORY
       WHERE start_date <= '2022-11-30' AND end_date >= '2022-11-01'
   )
-  AND FLOOR(c.daily_fee * 30 * (1 - p.discount_rate / 100)) BETWEEN 500000 AND 1999999
+  AND round(c.daily_fee * 30 * (1 - p.discount_rate / 100)) BETWEEN 500000 AND 1999999
 ORDER BY fee DESC, car_type ASC, car_id DESC;
