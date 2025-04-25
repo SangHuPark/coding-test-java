@@ -4,11 +4,8 @@ import java.util.*;
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringBuilder sb = new StringBuilder();
-    static StringTokenizer st;
 
-    static Map<Integer, int[]> map;
-
-    static String getMinDigit(int sticks) {
+    static String sticksToNum(int sticks) {
         switch (sticks) {
             case 2: return "1";
             case 3: return "7";
@@ -30,15 +27,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        map = new HashMap<>();
-        map.put(2, new int[]{1});
-        map.put(3, new int[]{7});
-        map.put(4, new int[]{4});
-        map.put(5, new int[]{5, 3, 2});
-        map.put(6, new int[]{9, 6, 0});
-        map.put(7, new int[]{8});
-
-        // 최소값 초기화
+        // 1. 최소값 초기화
         String[] minNum = new String[101];
         Arrays.fill(minNum, "9999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999");
         minNum[2] = "1";
@@ -49,10 +38,10 @@ public class Main {
         minNum[7] = "8";
 
         for (int num = 8; num <= 100; num++) {
-            for (int digit = 2; digit <= 7; digit++) {
-                if (num - digit < 2) continue;
+            for (int sticks = 2; sticks <= 7; sticks++) {
+                if (num - sticks < 2) continue;
 
-                String temp = minNum[num - digit] + getMinDigit(digit);
+                String temp = minNum[num - sticks] + sticksToNum(sticks);
 
                 if (compare(temp, minNum[num])) {
                     minNum[num] = temp;
@@ -64,74 +53,26 @@ public class Main {
         for (int T = 0; T < testCase; T++) {
             int num = Integer.parseInt(br.readLine().trim());
 
-            // 전처리
-            List<Integer> elements = new ArrayList<>();
-            int cnt = num >> 1;
-            elements.add(2 + (num % 2)); // 맨 앞자리 삽입
-            for (int two = 1; two < cnt; two++) {
-                elements.add(2);
-            }
-
-            // 1. 최소값 구하기
-            /*// 한자리로 표현 가능하면 그 숫자가 최소
-            if (num >= 2 && num <= 7) {
-                int[] nums = map.get(num);
-                // 숫자는 0으로 시작할 수 없으므로
-                if (nums[nums.length - 1] == 0)
-                    sb.append(nums[nums.length - 2]);
-                else
-                    sb.append(nums[nums.length - 1]);
-            } // 그게 아니라면
-            else {
-                int temp = num;
-                int minus = 7;
-                List<Integer> minList = new LinkedList<>();
-                while (temp > 1 && minus > 1) {
-                    if (temp - minus < 2 && temp != minus) {
-                        minus--;
-                    } else {
-                        temp -= minus;
-                        minList.add(minus);
-                    }
-                }
-                minList.sort((o1, o2) -> {
-                    return Integer.compare(o1, o2);
-                });
-
-                if (temp != 0) {
-                    minList.add(minList.remove(0) + temp);
-                }
-
-                StringBuilder min = new StringBuilder();
-                int idx = 0;
-                for (int element : minList) {
-                    int[] nums = map.get(element);
-                    int leng = nums.length - 1;
-
-                    // 첫 번째 자리면 0은 불가
-                    if (idx == 0 && element == 6) {
-                        min.append(nums[leng - 1]);
-                    } else {
-                        min.append(nums[leng]);
-                    }
-                    idx++;
-                }
-                sb.append(min);
-            }
-            sb.append(" ");*/
-
+            // 최소값 삽입
             sb.append(minNum[num]).append(" ");
 
-            // 2. 최대값 구하기
+            // 2. 최대값 구하기 -> 2, 3 으로만 구성
             StringBuilder max = new StringBuilder();
-            for (int element : elements) {
-                max.append(map.get(element)[0]);
+            if (num % 2 == 1) {
+                int cnt = (num-3) >> 1;
+                max.append(7);
+                for (int repeat = 1; repeat <= cnt; repeat++) {
+                    max.append(1);
+                }
+            } else {
+                int cnt = num >> 1;
+                for (int repeat = 0; repeat < cnt; repeat++) {
+                    max.append(1);
+                }
             }
 
             sb.append(max).append("\n");
-
         }
-
         System.out.println(sb);
 
     }
