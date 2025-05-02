@@ -28,23 +28,32 @@ public class Main {
         }
 
         for (String word : map.keySet()) {
+            // 인접한 쌍 추출
             String nextWord = map.higherKey(word);
+
+            // 마지막 인덱스면 종료
             if (nextWord == null) break;
+
+            // 다음 문자열이 현재 문자열과 접두사가 있다면 현재 문자열의 겹치는 접두사 길이를 저장
             for (int idx = 1; idx <= word.length(); idx++) {
                 if (nextWord.startsWith(word.substring(0, idx))) {
                     map.put(word, map.get(word) + 1);
-                }
+                } else break;
             }
         }
 
+        // 최대 접두사 길이 계산
         int max = Integer.MIN_VALUE;
         for (String word : map.keySet()) {
             max = Math.max(max, map.get(word));
         }
 
+        // 최대 접두사 길이를 가진 문자열 저장
         for (String word : map.keySet()) {
             if (map.get(word) == max) result.add(word);
         }
+
+        // 각 문자열 중 최대 접두사 길이를 가지는 단어가 있
         for (String word : map.keySet()) {
             for (String r : result) {
                 if (word.startsWith(r.substring(0, max))) {
