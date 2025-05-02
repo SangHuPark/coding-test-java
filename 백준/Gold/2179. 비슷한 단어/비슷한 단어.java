@@ -13,46 +13,64 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
 
     static int N;
-    static String[] sorted;
 
     public static void main(String[] args) throws IOException {
-        init();
+        N = Integer.parseInt(br.readLine().trim());
 
-        int maxLen = -1;
-        String a = "", b = "";
-        for (int curIdx = 0; curIdx < N - 1; curIdx++) {
-            String cur = sorted[curIdx];
-            for (int nextIdx = 1; nextIdx < N; nextIdx++) {
-                if (curIdx == nextIdx)
-                    continue;
+        TreeMap<String, Integer> map = new TreeMap<>();
+        String[] list = new String[N];
+        List<String> result = new ArrayList<>();
 
-                String next = sorted[nextIdx];
-                int len = 0;
-                for (int ch = 0; ch < Math.min(cur.length(), next.length()); ch++) {
-                    if (cur.charAt(ch) != next.charAt(ch))
-                        break;
+        for (int idx = 0; idx < N; idx++) {
+            String word = br.readLine();
+            map.put(word, 0);
+            list[idx] = word;
+        }
 
-                    len++;
-                }
-
-                if (maxLen < len) {
-                    maxLen = len;
-                    a = cur;
-                    b = next;
+        for (String word : map.keySet()) {
+            String nextWord = map.higherKey(word);
+            if (nextWord == null) break;
+            for (int idx = 1; idx <= word.length(); idx++) {
+                if (nextWord.startsWith(word.substring(0, idx))) {
+                    map.put(word, map.get(word) + 1);
                 }
             }
         }
-        System.out.println(a + "\n" + b);
-    }
 
-    public static void init() throws IOException {
-        N = Integer.parseInt(br.readLine().trim());
-
-        // 1. 단어들을 입력받아 배열에 저장하고, 원래 입력 순서도 함께 기록한다.
-        sorted = new String[N];
-        for (int idx = 0; idx < N; idx++) {
-            sorted[idx] = br.readLine().trim();
+        int max = Integer.MIN_VALUE;
+        for (String word : map.keySet()) {
+            max = Math.max(max, map.get(word));
         }
+
+        for (String word : map.keySet()) {
+            if (map.get(word) == max) result.add(word);
+        }
+        for (String word : map.keySet()) {
+            for (String r : result) {
+                if (word.startsWith(r.substring(0, max))) {
+                    map.put(word, map.get(r));
+                }
+            }
+        }
+
+        String first = null;
+        for (String word : list) {
+            if (map.containsKey(word) && map.get(word) == max) {
+                first = word;
+                break;
+            }
+        }
+        System.out.println(first);
+
+        for (String word : list) {
+            if (word.equals(first)) continue;
+            if (word.length() < max) continue;
+            if (first.startsWith(word.substring(0, max)) || word.startsWith(first.substring(0, max))) {
+                System.out.println(word);
+                break;
+            }
+        }
+
     }
 
 }
