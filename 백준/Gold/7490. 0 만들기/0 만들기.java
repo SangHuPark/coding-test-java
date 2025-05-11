@@ -12,7 +12,6 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
 
     static int N;
-    static char[] operators;
 
     public static void init() throws IOException {
         N = Integer.parseInt(br.readLine().trim());
@@ -21,10 +20,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
         int testCase = Integer.parseInt(br.readLine().trim());
 
-        operators = new char[3];
-        operators[0] = ' ';
-        operators[1] = '+';
-        operators[2] = '-';
         for (int T = 0; T < testCase; T++) {
             init();
 
@@ -52,44 +47,17 @@ public class Main {
             return;
         }
 
-        for (int operatorIdx = 0; operatorIdx < 3; operatorIdx++) {
-            chooses[idx] = operators[operatorIdx];
-            chooseOperator(idx + 1, chooses);
-        }
+        chooses[idx] = ' ';
+        chooseOperator(idx + 1, chooses);
+
+        chooses[idx] = '+';
+        chooseOperator(idx + 1, chooses);
+
+        chooses[idx] = '-';
+        chooseOperator(idx + 1, chooses);
     }
 
     public static boolean isZero(char[] chooses) {
-//        Stack<Integer> stack = new Stack<>();
-//        stack.add(1);
-//        int num = 2;
-//        for (char operator : chooses) {
-//            switch (operator) {
-//                case '+':
-//                    stack.add(num);
-//                    break;
-//                case '-':
-//                    stack.add((-1) * num);
-//                    break;
-//                case ' ':
-//                    int tmp = stack.pop() * 10;
-//                    if (tmp < 0)
-//                        tmp -= num;
-//                    else
-//                        tmp += num;
-//
-//                    stack.add(tmp);
-//                    break;
-//            }
-//            num++;
-//        }
-//
-//        int answer = 0;
-//        for (int element : stack) {
-//            answer += element;
-//        }
-//
-//        return answer == 0;
-
         int sum = 0;
         int num = 1;
         int current = num++; // 시작 값
@@ -113,7 +81,8 @@ public class Main {
                     break;
             }
         }
-        sum += current;
+        sum += current; // 마지막 숫자 처리
+
         return sum == 0;
     }
 
