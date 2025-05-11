@@ -1,11 +1,8 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Stack;
 
 /**
- * 구현 + DFS
+ * 내가 선택한 카테고리: 구현 + DFS
  * 1. 선택지는 고정적으로 3개. +, -, ' '
  * 2. 기저조건: N-1 개를 선택하면 끝
  * 3. 수식이 만들어지면 해당 값을 계산. 0이면 수식 저장
@@ -62,36 +59,62 @@ public class Main {
     }
 
     public static boolean isZero(char[] chooses) {
-        Stack<Integer> stack = new Stack<>();
-        stack.add(1);
-        int num = 2;
+//        Stack<Integer> stack = new Stack<>();
+//        stack.add(1);
+//        int num = 2;
+//        for (char operator : chooses) {
+//            switch (operator) {
+//                case '+':
+//                    stack.add(num);
+//                    break;
+//                case '-':
+//                    stack.add((-1) * num);
+//                    break;
+//                case ' ':
+//                    int tmp = stack.pop() * 10;
+//                    if (tmp < 0)
+//                        tmp -= num;
+//                    else
+//                        tmp += num;
+//
+//                    stack.add(tmp);
+//                    break;
+//            }
+//            num++;
+//        }
+//
+//        int answer = 0;
+//        for (int element : stack) {
+//            answer += element;
+//        }
+//
+//        return answer == 0;
+
+        int sum = 0;
+        int num = 1;
+        int current = num++; // 시작 값
+
         for (char operator : chooses) {
             switch (operator) {
                 case '+':
-                    stack.add(num);
+                    sum += current;
+                    current = num++;
                     break;
                 case '-':
-                    stack.add((-1) * num);
+                    sum += current;
+                    current = -num++;
                     break;
                 case ' ':
-                    int tmp = stack.pop() * 10;
-                    if (tmp < 0)
-                        tmp -= num;
-                    else
-                        tmp += num;
-
-                    stack.add(tmp);
+                    if (current < 0) {
+                        current = current * 10 - num++;
+                    } else {
+                        current = current * 10 + num++;
+                    }
                     break;
             }
-            num++;
         }
-
-        int answer = 0;
-        for (int element : stack) {
-            answer += element;
-        }
-
-        return answer == 0;
+        sum += current;
+        return sum == 0;
     }
 
 }
