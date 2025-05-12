@@ -61,15 +61,12 @@ public class Main {
 
     public static int getStar(int x, int y) {
         int cnt = 0;
-        int maxCnt = Integer.MIN_VALUE;
 
         for (Star star : stars) {
             if (star.row >= x && star.row <= x + range && star.col >= y && star.col <= y + range)
                 cnt++;
         }
 
-        maxCnt = Math.max(maxCnt, cnt);
-
-        return maxCnt;
+        return cnt;
     }
 }
