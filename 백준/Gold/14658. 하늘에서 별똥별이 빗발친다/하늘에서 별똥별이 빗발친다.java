@@ -63,13 +63,8 @@ public class Main {
         int cnt = 0;
         int maxCnt = Integer.MIN_VALUE;
 
-        int startRow = Math.max(x - range + 1, 0);
-        int startCol = Math.max(y - range + 1, 0);
-
-        cnt = 0;
-
         for (Star star : stars) {
-            if (star.row >= startRow && star.row <= startRow + range && star.col >= startCol && star.col <= startCol + range)
+            if (star.row >= x && star.row <= x + range && star.col >= y && star.col <= y + range)
                 cnt++;
         }
 
