@@ -15,25 +15,24 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
 
     static int amount;
-    static int[][] dp;
+    static int[] dp;
 
     public static void main(String[] args) throws IOException {
         int testCase = Integer.parseInt(br.readLine().trim());
 
         for (int T = 0; T < testCase; T++) {
             amount = Integer.parseInt(br.readLine().trim());
-            dp = new int[4][amount + 1];
-            dp[0][0] = 1;
 
-            for (int coin = 1; coin < 4; coin++) {
-                for (int dpIdx = 0; dpIdx <= amount; dpIdx++) {
-                    dp[coin][dpIdx] = dp[coin-1][dpIdx];
-                    if (dpIdx >= coin)
-                        dp[coin][dpIdx] += dp[coin][dpIdx - coin];
+            dp = new int[amount + 1];
+            dp[0] = 1;
+
+            for (int coin = 1; coin <= 3; coin++) {
+                for (int dpIdx = coin; dpIdx <= amount; dpIdx++) {
+                    dp[dpIdx] += dp[dpIdx - coin];
                 }
             }
 
-            sb.append(dp[3][amount]).append("\n");
+            sb.append(dp[amount]).append("\n");
         }
 
         System.out.println(sb);
