@@ -27,21 +27,21 @@ public class Main {
         }
 
         heightSum = 0;
-        for (int idx = 0; idx < colSize; idx++) {
-            int leftHeight = 0;
+        for (int idx = 1; idx < colSize-1; idx++) {
+            int leftMax = 0;
             for (int left = 0; left < idx; left++) {
-                leftHeight = Math.max(leftHeight, heights[left]);
+                leftMax = Math.max(leftMax, heights[left]);
             }
 
-            int rightHeight = 0;
+            int rightMax = 0;
             for (int right = idx+1; right < colSize; right++) {
-                rightHeight = Math.max(rightHeight, heights[right]);
+                rightMax = Math.max(rightMax, heights[right]);
             }
 
-            int tmp = Math.min(leftHeight, rightHeight) - heights[idx];
-            if (tmp < 0) tmp = 0;
+            int cnt = Math.min(leftMax, rightMax) - heights[idx];
+            if (cnt < 0) cnt = 0;
 
-            heightSum += tmp;
+            heightSum += cnt;
         }
 
         System.out.println(heightSum);
