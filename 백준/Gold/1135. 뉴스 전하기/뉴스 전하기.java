@@ -12,25 +12,7 @@ import java.util.*;
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     static StringTokenizer st;
-
-    static class Node implements Comparable<Node> {
-        int idx;
-        int childTime;
-
-        Node (int idx , int childTime) {
-            this.idx = idx;
-            this.childTime = childTime;
-        }
-
-        public int compareTo(Node o) {
-            return o.childTime - this.childTime;
-        }
-
-        public String toString() {
-            return idx + " " + childTime;
-        }
-    }
-
+    
     static int N;
     static List<Integer>[] graph;
 
@@ -43,7 +25,8 @@ public class Main {
         }
 
         st = new StringTokenizer(br.readLine().trim());
-        st.nextToken();
+        st.nextToken(); // 0번 노드는 항상 -1 이므로 생략
+        // 1번 노드의 부모부터 트리 구조 생성
         for (int idx = 1; idx < N; idx++) {
             int root = Integer.parseInt(st.nextToken());
 
