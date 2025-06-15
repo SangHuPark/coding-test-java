@@ -43,9 +43,9 @@ public class Main {
         }
 
         st = new StringTokenizer(br.readLine().trim());
-        for (int idx = 0; idx < N; idx++) {
+        st.nextToken();
+        for (int idx = 1; idx < N; idx++) {
             int root = Integer.parseInt(st.nextToken());
-            if (root == -1) continue;
 
             graph[root].add(idx);
         }
