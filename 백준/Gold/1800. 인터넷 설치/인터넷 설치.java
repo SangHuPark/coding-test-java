@@ -55,8 +55,8 @@ public class Main {
             int to = Integer.parseInt(st.nextToken());
             int cost = Integer.parseInt(st.nextToken());
 
-            graph[from].add(new Node(to, cost, K));
-            graph[to].add(new Node(from, cost, K));
+            graph[from].add(new Node(to, cost, 0));
+            graph[to].add(new Node(from, cost, 0));
             right = Math.max(right, cost);
         }
 
@@ -94,7 +94,7 @@ public class Main {
                 int nextPass = node.pass + (next.cost > mid ? 1 : 0);
                 if (usedPass[next.idx] > nextPass) {
                     usedPass[next.idx] = nextPass;
-                    pq.add(new Node(next.idx, 0, nextPass));
+                    pq.add(new Node(next.idx, next.cost, nextPass));
                 }
             }
 
