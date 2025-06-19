@@ -33,7 +33,7 @@ public class Main {
             int to = Integer.parseInt(st.nextToken());
 
             // 친구면 union
-            if (relation.equals("F")) {
+            if ("F".equals(relation)) {
                 union(from, to);
             } // 원수면 그래프 생성
             else {
