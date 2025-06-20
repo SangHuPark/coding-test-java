@@ -48,7 +48,6 @@ public class Main {
     static Medicine[][] medicineMap;
 
     static Deque<Pos> q;
-    static boolean[][] visited;
 
     static int maxFlowerCnt;
 
@@ -100,15 +99,12 @@ public class Main {
         if (depth == greenCnt + redCnt) {
             medicineMap = new Medicine[N][M];
             q = new ArrayDeque<>();
-            visited = new boolean[N][M];
             for (int idx = 0; idx < elementCnt; idx++) {
                 Pos pos = elements.get(idx);
                 if (selectedGreen[idx]) {
-                    visited[pos.row][pos.col] = true;
                     medicineMap[pos.row][pos.col] = new Medicine(GREEN, 0);
                     q.add(new Pos(pos.row, pos.col));
                 } else if (selectedRed[idx]) {
-                    visited[pos.row][pos.col] = true;
                     medicineMap[pos.row][pos.col] = new Medicine(RED, 0);
                     q.add(new Pos(pos.row, pos.col));
                 }
@@ -135,6 +131,7 @@ public class Main {
             Pos pos = q.poll();
             Medicine medicine = medicineMap[pos.row][pos.col];
 
+            // Green 을 뿌리고 큐에 담았는데 다음 큐에서 나온 Red 가 같은 시간에 만나 꽃이 될 경우, 아직 큐에 Green 이 남아있으므로 패스해줘야 한다.
             if (!Objects.isNull(medicine) && medicine.type == FLOWER) continue;
 
             for (int delta = 0; delta < 4; delta++) {
@@ -146,12 +143,12 @@ public class Main {
 
                 // 배양액을 처음 전파하는 곳
                 if (Objects.isNull(medicineMap[nextRow][nextCol])) {
-                    visited[nextRow][nextCol] = true;
                     medicineMap[nextRow][nextCol] = new Medicine(medicine.type, medicine.time + 1);
                     q.add(new Pos(nextRow, nextCol));
                 } // 다른 배양액이 있다면
                 else {
                     Medicine other = medicineMap[nextRow][nextCol];
+
                     // 꽃이면 패스
                     if (other.type == FLOWER) continue;
 
@@ -159,7 +156,7 @@ public class Main {
                     if (medicine.type != other.type) {
                         // 같은 시간일 때만 꽃
                         if (medicine.time + 1 == other.time) {
-                            medicineMap[nextRow][nextCol] = new Medicine(FLOWER, -2501);
+                            medicineMap[nextRow][nextCol] = new Medicine(FLOWER, -1);
                             flowerCnt++;
                         }
                     }
