@@ -93,12 +93,12 @@ public class Main {
         pq = new PriorityQueue<>();
 
         pq.add(new Edge(elements[idx], 0));
-//        dist[idx][elements[idx]] = 0;
+        dist[idx][elements[idx]] = 0;
 
         while (!pq.isEmpty()) {
             Edge edge = pq.poll();
 
-//            if (node.cost > dist[idx][node.idx]) continue;
+            if (edge.cost > dist[idx][edge.idx]) continue;
 
             for (Edge next : graph[edge.idx]) {
                 int newCost = edge.cost + next.cost;
