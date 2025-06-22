@@ -12,7 +12,7 @@ public class Main {
     static StringBuilder sb = new StringBuilder();
     static StringTokenizer st;
 
-    static long x, y, d, k;
+    static int x, y, d, k;
 
     public static void main(String[] args) throws IOException {
         int testCase = Integer.parseInt(br.readLine().trim());
@@ -23,13 +23,13 @@ public class Main {
             y = Integer.parseInt(st.nextToken());
 
             d = y - x;
-            k = (long) Math.sqrt(d);
-
-            long answer = 0;
+            k = (int) Math.sqrt(d);
+            
+            int answer = 0;
             if (d <= k * k) answer = (k << 1) - 1;
             else if (k * k < d && d <= k * (k + 1)) answer = k << 1;
             else if (d > k * (k + 1)) answer = (k << 1) + 1;
-
+            
             sb.append(answer).append("\n");
         }
         System.out.println(sb);
