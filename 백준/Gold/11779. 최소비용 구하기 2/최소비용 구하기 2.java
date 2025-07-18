@@ -61,24 +61,23 @@ public class Main {
 
         dijkstra();
 
-        System.out.println(dist[end]);
-        List<Integer> list = new LinkedList<>();
-        list.add(end);
-        int cnt = 1;
+        List<Integer> nodes = new LinkedList<>();
+        nodes.add(end);
+        int cnt = 1, idx = end;
         while (true) {
-            if (prev[end] == 0) break;
-            list.add(prev[end]);
-            end = prev[end];
+            if (prev[idx] == 0) break;
+
+            nodes.add(prev[idx]);
+            idx = prev[idx];
             cnt++;
         }
-        Collections.reverse(list);
-        // 이러면 십의 자리 수 "10" 이 들어갔을 때 "01" 로 출력됨
-//        System.out.println(sb.reverse());
+        Collections.reverse(nodes);
 
-        for (int vertex : list) {
+        sb.append(dist[end]).append("\n");
+        sb.append(cnt).append("\n");
+        for (int vertex : nodes) {
             sb.append(vertex).append(" ");
         }
-        System.out.println(cnt);
         System.out.println(sb);
     }
 
