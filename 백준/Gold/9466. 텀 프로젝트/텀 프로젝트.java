@@ -34,6 +34,7 @@ public class Main {
             hasVisited = new boolean[N + 1];
             nonTeamCnt = N;
             for (int idx = 1; idx <= N; idx++) {
+                if (hasVisited[idx]) continue;
                 DFS(idx);
             }
 
@@ -43,13 +44,15 @@ public class Main {
     }
 
     public static void DFS(int cur) {
-        checked[cur] = true;
+        checked[cur] = true; // 방문 체크
 
         int next = students[cur];
 
+        // 방문하지 않은 노드라면 이동
         if (!checked[next]) {
             DFS(next);
-        } else if (!hasVisited[next]) {
+        } // 방문한 노드인데, 탐색이 끝나지 않았다면 싸이클 발생
+        else if (!hasVisited[next]) {
             nonTeamCnt--;
             while (next != cur) {
                 nonTeamCnt--;
@@ -57,7 +60,7 @@ public class Main {
             }
         }
 
+        // 현재 노드와 연결된 경로의 탐색이 끝났음을 체크
         hasVisited[cur] = true;
-
     }
 }
