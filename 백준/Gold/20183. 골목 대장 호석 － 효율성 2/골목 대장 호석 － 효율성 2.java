@@ -69,7 +69,7 @@ public class Main {
 
             if (dijkstra(mid)) {
                 right = mid - 1;
-                answer = Long.max(answer, mid);
+                answer = mid;
             } else {
                 left = mid + 1;
             }
@@ -88,7 +88,7 @@ public class Main {
 
         while (!pq.isEmpty()) {
             Node cur = pq.poll();
-            
+
             if (dist[cur.idx] < cur.cost) continue;
 
             for (Node next : graph[cur.idx]) {
