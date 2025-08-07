@@ -2,10 +2,17 @@ import java.io.*;
 import java.util.*;
 
 /**
- * BOJ_문제번호_문제명
+ * BOJ_24042_횡단보도
  * @author tkdgn407
  *
- * 1.
+ * 1. PQ에는 (현재 위치한 노드, 해당 노드에 도달한 시간)을 저장
+ * 2. dist는 각 노드에 최소 도착 시간을 저장
+ * 3. 현재 위치에서 연결된 다음 노드를 확인할 때
+ *  3-1. 현재 노드까지의 총 시간 % M과 다음 노드까지의 주기를 비교
+ *  3-2. mod > next.cycle라면 다음 횡단보도가 열릴 때까지 기다려야 하므로
+ *      3-2-1. 도착 시간 = 현재 시간 + (K - (현재 시간 % K)) + 1
+ *  3-3. 아니라면 바로 통과 가능하므로
+ *      3-3-1. 도착 시간 = 현재 시간 + 1
  */
 public class Main {
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -81,17 +88,20 @@ public class Main {
 
             for (Node next = graph[cur.idx]; next != null; next = next.next) {
                 long wait = 0;
-                long mod = cur.totalCost % M;
-                if (mod > next.cycle) {
-                    wait = M - mod + next.cycle;
-                } else {
-                    wait = next.cycle - mod;
+                long curCycle = cur.totalCost % M; // 현재 노드까지의 도착 시간에 어떤 횡단보도가 켜지는지
+                // 이미 다음 노드의 횡단보도가 지나갔다면
+                if (curCycle > next.cycle) {
+                    // 현재 횡단보도 이후에 다음 횡단보도가 켜지기 까지 기다려야 하는 시간
+                    wait = M - curCycle + next.cycle;
+                } // 지나치지 않았다면 남은 시간만큼만 대기
+                else {
+                    wait = next.cycle - curCycle;
                 }
-                long arrive = cur.totalCost + wait + 1;
+                long newTotalCost = cur.totalCost + wait + 1; // 현재까지 전체 시간 + 기다리는 시간 + 도착 시간
 
-                if (dist[next.idx] > arrive) {
-                    dist[next.idx] = arrive;
-                    pq.add(new Dij(next.idx, arrive));
+                if (dist[next.idx] > newTotalCost) {
+                    dist[next.idx] = newTotalCost;
+                    pq.add(new Dij(next.idx, newTotalCost));
                 }
             }
         }
