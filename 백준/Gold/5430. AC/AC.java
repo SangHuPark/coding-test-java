@@ -26,16 +26,9 @@ public class Main {
             list = new LinkedList<>();
 
             if (N != 0) {
-                String tmp = br.readLine().trim().replace("[", "").replace("]", "");
-                String[] input = new String[N];
-                if (tmp.contains(",")) {
-                    input = tmp.split(",");
-                } else {
-                    input[0] = tmp;
-                }
-
+                st = new StringTokenizer(br.readLine().trim(), ",[]");
                 for (int idx = 0; idx < N; idx++) {
-                    list.add(Integer.parseInt(input[idx]));
+                    list.add(Integer.parseInt(st.nextToken()));
                 }
             } else {
                 br.readLine().trim();
