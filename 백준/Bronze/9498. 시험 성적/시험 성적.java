@@ -1,24 +1,33 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
+/**
+ * BOJ_문제번호_문제명
+ * @author
+ *
+ * 1.
+ */
 public class Main {
+    static StringBuilder sb = new StringBuilder();
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+    static StringTokenizer st;
 
     public static void main(String[] args) throws IOException {
-        // 90 ~ 100점은 A, 80 ~ 89점은 B, 70 ~ 79점은 C, 60 ~ 69점은 D, 나머지 점수는 F
-        int score = Integer.parseInt(br.readLine());
-        
-        if (score >= 90 && score <= 100)
-            System.out.println("A");
-        else if (score >= 80 && score < 90)
-            System.out.println("B");
-        else if (score >= 70 && score < 80)
-            System.out.println("C");
-        else if (score >= 60 && score < 70)
-            System.out.println("D");
+        int num = Integer.parseInt(br.readLine().trim());
+
+        if (num >= 90)
+            sb.append("A");
+        else if (num >= 80)
+            sb.append("B");
+        else if (num >= 70)
+            sb.append("C");
+        else if (num >= 60)
+            sb.append("D");
         else
-            System.out.println("F");
+            sb.append("F");
+
+        bw.write(sb.toString());
+        bw.close();
     }
 }
