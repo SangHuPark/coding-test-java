@@ -1,17 +1,26 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.io.*;
+import java.util.*;
 
+/**
+ * BOJ_문제번호_문제명
+ * @author
+ *
+ * 1.
+ */
 public class Main {
+    static StringBuilder sb = new StringBuilder();
     static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
     static StringTokenizer st;
 
     public static void main(String[] args) throws IOException {
         st = new StringTokenizer(br.readLine().trim());
+
         int A = Integer.parseInt(st.nextToken());
         int B = Integer.parseInt(st.nextToken());
-        
-        System.out.println(A*B);
+
+        String answer = String.valueOf(A * B);
+        bw.write(answer);
+        bw.close();
     }
 }
